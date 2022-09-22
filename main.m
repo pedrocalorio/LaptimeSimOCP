@@ -8,7 +8,7 @@ optimalDesignFlag = false;
 
 problem = Initialize.fnInitMethod('trapezoid');
 problem = Initialize.fnInitVehicle(problem);
-problem = Initialize.fnInitTrackv2(problem, true, false);
+problem = Initialize.fnInitTrack(problem, true, true);
 problem = Initialize.fnInitFunctionHandles(problem);
 problem = Initialize.fnInitBounds(problem,optimalDesignFlag);
 
@@ -17,7 +17,7 @@ problem.options.optimalDesignFlag = optimalDesignFlag;
 %% Get initial estimate
 % You need an initial guess for solving the BVP
 
-problem = PreProcessing.fnGetInitialEstimate(problem, 'Load');
+problem = PreProcessing.fnGetInitialEstimate(problem, 'PreSim');
 
 %% Set solver options and solve the Minimum Time Maneuvre 
 

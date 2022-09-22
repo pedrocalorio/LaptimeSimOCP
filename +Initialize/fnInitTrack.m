@@ -87,57 +87,78 @@ else
             error('Invalid method.');
     end
     
-    % Import track from data
-    trackData = readtable('Nurburgring');
+%     % Import track from data
+%     trackData = readtable('Nurburgring');
+%     
+%     Track = struct();
+%     td = struct();
+% 
+%     nPoints = 1500;
+%     Track.sLap = trackData.CorrLapDist';
+% 
+%     Track.TrackWidth = 8;
+%     
+%     Track.sLap = linspace(0,Track.sLap(end),nPoints);
+%     Track.curv = interp1(trackData.CorrLapDist',...
+%                       trackData.MathInverseCornerRadius',...
+%                       Track.sLap,'linear','extrap');
+%                   
+%     Track.curv_nosmooth = Track.curv;
+%     
+%     Track.d_sLap   = [diff(Track.sLap), Track.sLap(end) - Track.sLap(end-1)];
+%     Track.aYaw  	= cumsum(Track.curv.*Track.d_sLap);
+%     td.xCar 	= cumsum(Track.d_sLap.*cos(Track.aYaw));
+%     td.yCar 	= cumsum(Track.d_sLap.*sin(Track.aYaw));
+% 
+%     % here we have the track centerline with initial and end not together
+% 
+%     % calculate delta y and delta x
+%     deltaX = (td.xCar(1) - td.xCar(end))/nPoints;
+%     deltaY = (td.yCar(1) - td.yCar(end))/nPoints;
+%     % put these delta x and y into the "new" x and y position
+% %     td.xCar = td.xCar - deltaX;
+% %     td.yCar = td.yCar - deltaY;
+%     td.xCar = cumsum(td.xCar-td.xCar*deltaX);
+%     td.yCar = cumsum(td.yCar-td.yCar*deltaY);
+% 
+%     % calculates the delta heading angle
+%     newaYaw = atan(deltaY/deltaX)/nPoints;
+% 
+%     % updates it in the "old" heading angle
+%     Track.Angle = Track.aYaw - newaYaw;
+%     % then we have the final x and y coordinate
+%     Track.XCoord 	= cumsum(Track.d_sLap.*cos(Track.Angle));
+%     Track.YCoord 	= cumsum(Track.d_sLap.*sin(Track.Angle));
+% 
+%     Track.XCoordLeft = Track.XCoord + Track.TrackWidth/2*gradient(Track.YCoord)./(gradient(Track.XCoord).^2 + gradient(Track.YCoord).^2).^0.5;
+%     Track.YCoordLeft = Track.YCoord - Track.TrackWidth/2*gradient(Track.XCoord)./(gradient(Track.XCoord).^2 + gradient(Track.YCoord).^2).^0.5;
+%     Track.XCoordRight = Track.XCoord - Track.TrackWidth/2*gradient(Track.YCoord)./(gradient(Track.XCoord).^2 + gradient(Track.YCoord).^2).^0.5;
+%     Track.YCoordRight = Track.YCoord + Track.TrackWidth/2*gradient(Track.XCoord)./(gradient(Track.XCoord).^2 + gradient(Track.YCoord).^2).^0.5;
+% 
+%     td.TrackWidth = Track.TrackWidth;
+%     td.sLap = linspace(Track.sLap(1),Track.sLap(end),nGrid);
+%     td.curv = interp1(Track.sLap,Track.curv,td.sLap);
+%     td.curv_nonsmooth = td.curv;
+%     td.d_sLap   = [diff(td.sLap), td.sLap(end) - td.sLap(end-1)];
+%     td.aYaw  	= interp1(Track.sLap,Track.Angle,td.sLap);
+%     td.xCar 	= interp1(Track.sLap,Track.XCoord,td.sLap);
+%     td.yCar 	= interp1(Track.sLap,Track.YCoord,td.sLap);
+%     td.xCarLeft = interp1(Track.sLap,Track.XCoordLeft,td.sLap);
+%     td.yCarLeft = interp1(Track.sLap,Track.YCoordLeft,td.sLap);
+%     td.xCarRight = interp1(Track.sLap,Track.XCoordRight,td.sLap);
+%     td.yCarRight = interp1(Track.sLap,Track.YCoordRight,td.sLap); 
+
+    % BARCELONA
+
+    load('BAR')
     
-    Track = struct();
+    
     td = struct();
-
-    nPoints = 1500;
-    Track.sLap = trackData.CorrLapDist';
-
-    Track.TrackWidth = 8;
     
-    Track.sLap = linspace(0,Track.sLap(end),nPoints);
-    Track.curv = interp1(trackData.CorrLapDist',...
-                      trackData.MathInverseCornerRadius',...
-                      Track.sLap,'linear','extrap');
-                  
-    Track.curv_nosmooth = Track.curv;
-    
-    Track.d_sLap   = [diff(Track.sLap), Track.sLap(end) - Track.sLap(end-1)];
-    Track.aYaw  	= cumsum(Track.curv.*Track.d_sLap);
-    td.xCar 	= cumsum(Track.d_sLap.*cos(Track.aYaw));
-    td.yCar 	= cumsum(Track.d_sLap.*sin(Track.aYaw));
-
-    % here we have the track centerline with initial and end not together
-
-    % calculate delta y and delta x
-    deltaX = (td.xCar(1) - td.xCar(end))/nPoints;
-    deltaY = (td.yCar(1) - td.yCar(end))/nPoints;
-    % put these delta x and y into the "new" x and y position
-%     td.xCar = td.xCar - deltaX;
-%     td.yCar = td.yCar - deltaY;
-    td.xCar = cumsum(td.xCar-td.xCar*deltaX);
-    td.yCar = cumsum(td.yCar-td.yCar*deltaY);
-
-    % calculates the delta heading angle
-    newaYaw = atan(deltaY/deltaX)/nPoints;
-
-    % updates it in the "old" heading angle
-    Track.Angle = Track.aYaw - newaYaw;
-    % then we have the final x and y coordinate
-    Track.XCoord 	= cumsum(Track.d_sLap.*cos(Track.Angle));
-    Track.YCoord 	= cumsum(Track.d_sLap.*sin(Track.Angle));
-
-    Track.XCoordLeft = Track.XCoord + Track.TrackWidth/2*gradient(Track.YCoord)./(gradient(Track.XCoord).^2 + gradient(Track.YCoord).^2).^0.5;
-    Track.YCoordLeft = Track.YCoord - Track.TrackWidth/2*gradient(Track.XCoord)./(gradient(Track.XCoord).^2 + gradient(Track.YCoord).^2).^0.5;
-    Track.XCoordRight = Track.XCoord - Track.TrackWidth/2*gradient(Track.YCoord)./(gradient(Track.XCoord).^2 + gradient(Track.YCoord).^2).^0.5;
-    Track.YCoordRight = Track.YCoord + Track.TrackWidth/2*gradient(Track.XCoord)./(gradient(Track.XCoord).^2 + gradient(Track.YCoord).^2).^0.5;
-
     td.TrackWidth = Track.TrackWidth;
+    
     td.sLap = linspace(Track.sLap(1),Track.sLap(end),nGrid);
-    td.curv = interp1(Track.sLap,Track.curv,td.sLap);
+    td.curv = interp1(Track.sLap,Track.rCurv,td.sLap);
     td.curv_nonsmooth = td.curv;
     td.d_sLap   = [diff(td.sLap), td.sLap(end) - td.sLap(end-1)];
     td.aYaw  	= interp1(Track.sLap,Track.Angle,td.sLap);
@@ -148,27 +169,6 @@ else
     td.xCarRight = interp1(Track.sLap,Track.XCoordRight,td.sLap);
     td.yCarRight = interp1(Track.sLap,Track.YCoordRight,td.sLap); 
 
-    %% BARCELONA
-
-%     load('BAR')
-%     
-%     
-%     td = struct();
-%     
-%     td.TrackWidth = Track.TrackWidth;
-%     
-%     td.sLap = linspace(Track.sLap(1),Track.sLap(end),nGrid);
-%     td.curv = interp1(Track.sLap,Track.rCurv,td.sLap);
-%     td.curv_nonsmooth = td.curv;
-%     td.d_sLap   = [diff(td.sLap), td.sLap(end) - td.sLap(end-1)];
-%     td.aYaw  	= interp1(Track.sLap,Track.Angle,td.sLap);
-%     td.xCar 	= interp1(Track.sLap,Track.XCoord,td.sLap);
-%     td.yCar 	= interp1(Track.sLap,Track.YCoord,td.sLap);
-%     td.xCarLeft = interp1(Track.sLap,Track.XCoordLeft,td.sLap);
-%     td.yCarLeft = interp1(Track.sLap,Track.YCoordLeft,td.sLap);
-%     td.xCarRight = interp1(Track.sLap,Track.XCoordRight,td.sLap);
-%     td.yCarRight = interp1(Track.sLap,Track.YCoordRight,td.sLap); 
-% 
 
     
     problem.dsSystem.td = td;
@@ -220,7 +220,7 @@ plot(td.xCar, td.yCar, 'black--',td.xCarLeft, td.yCarLeft,'black',td.xCarRight, 
 hold on
 plot(0,0,'>','LineWidth',3)
 % xlim([min(Track.xCar)-50 max(Track.xCar)+50])
-title('Circuit de Barcelona-Catalunya','Interpreter','latex');
+% title('Circuit de Barcelona-Catalunya','Interpreter','latex');
 xlabel('X-Coordinate [m]','Interpreter','latex'); ylabel('Y-Coordinate [m]','Interpreter','latex');
 daspect([1.5 1.15 10])
 set(gca,'FontSize',15)

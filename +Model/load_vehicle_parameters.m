@@ -61,7 +61,7 @@ vehicle.tire_4.MF = LMPTire_Rear_26psi_v2();
 
 % Diff
 
-vehicle.differential.To = 0*50;
+vehicle.differential.To = 1*50;
 vehicle.differential.G = 1.8;
 
 % Engine properties

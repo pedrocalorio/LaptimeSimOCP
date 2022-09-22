@@ -5,7 +5,7 @@ problem.options.method = sMethod;
 
 switch problem.options.method
     case 'trapezoid'
-        problem.options.trapezoid.nGrid = 700;
+        problem.options.trapezoid.nGrid = 70;
     case 'hermiteSimpson'
         problem.options.hermiteSimpson.nSegment = 155;
     otherwise
