@@ -1,0 +1,68 @@
+[
+  {
+    "directory": "D:\\dev\\DynamicLaptimeSim\\v2\\4WM_PLANAR_7DOF\\+Utilities\\codegen\\mex\\unPackDecVar",
+    "command": "cl /c /Zc:__cplusplus /Zp8 /GR /W3 /EHs /nologo /MD /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /D_SECURE_SCL=0   /DMATLAB_MEX_FILE  /DMATLAB_MEX_FILE /O2 /Oy- /DNDEBUG /fp:strict /utf-8 /I \".\" /I \"D:\\dev\\DynamicLaptimeSim\\v2\\4WM_PLANAR_7DOF\\+Utilities\" /I \".\\interface\" /I \"D:\\Program Files\\MATLAB\\extern\\include\" /I \".\" -DMODEL=unPackDecVar_mex   unPackDecVar_data.c /Fobuild\\win64\\unPackDecVar_data.obj",
+    "file": "unPackDecVar_data.c",
+    "output": "build/win64/unPackDecVar_data.obj"
+  },
+  {
+    "directory": "D:\\dev\\DynamicLaptimeSim\\v2\\4WM_PLANAR_7DOF\\+Utilities\\codegen\\mex\\unPackDecVar",
+    "command": "cl /c /Zc:__cplusplus /Zp8 /GR /W3 /EHs /nologo /MD /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /D_SECURE_SCL=0   /DMATLAB_MEX_FILE  /DMATLAB_MEX_FILE /O2 /Oy- /DNDEBUG /fp:strict /utf-8 /I \".\" /I \"D:\\dev\\DynamicLaptimeSim\\v2\\4WM_PLANAR_7DOF\\+Utilities\" /I \".\\interface\" /I \"D:\\Program Files\\MATLAB\\extern\\include\" /I \".\" -DMODEL=unPackDecVar_mex   rt_nonfinite.c /Fobuild\\win64\\rt_nonfinite.obj",
+    "file": "rt_nonfinite.c",
+    "output": "build/win64/rt_nonfinite.obj"
+  },
+  {
+    "directory": "D:\\dev\\DynamicLaptimeSim\\v2\\4WM_PLANAR_7DOF\\+Utilities\\codegen\\mex\\unPackDecVar",
+    "command": "cl /c /Zc:__cplusplus /Zp8 /GR /W3 /EHs /nologo /MD /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /D_SECURE_SCL=0   /DMATLAB_MEX_FILE  /DMATLAB_MEX_FILE /O2 /Oy- /DNDEBUG /fp:strict /utf-8 /I \".\" /I \"D:\\dev\\DynamicLaptimeSim\\v2\\4WM_PLANAR_7DOF\\+Utilities\" /I \".\\interface\" /I \"D:\\Program Files\\MATLAB\\extern\\include\" /I \".\" -DMODEL=unPackDecVar_mex   unPackDecVar_initialize.c /Fobuild\\win64\\unPackDecVar_initialize.obj",
+    "file": "unPackDecVar_initialize.c",
+    "output": "build/win64/unPackDecVar_initialize.obj"
+  },
+  {
+    "directory": "D:\\dev\\DynamicLaptimeSim\\v2\\4WM_PLANAR_7DOF\\+Utilities\\codegen\\mex\\unPackDecVar",
+    "command": "cl /c /Zc:__cplusplus /Zp8 /GR /W3 /EHs /nologo /MD /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /D_SECURE_SCL=0   /DMATLAB_MEX_FILE  /DMATLAB_MEX_FILE /O2 /Oy- /DNDEBUG /fp:strict /utf-8 /I \".\" /I \"D:\\dev\\DynamicLaptimeSim\\v2\\4WM_PLANAR_7DOF\\+Utilities\" /I \".\\interface\" /I \"D:\\Program Files\\MATLAB\\extern\\include\" /I \".\" -DMODEL=unPackDecVar_mex   unPackDecVar_terminate.c /Fobuild\\win64\\unPackDecVar_terminate.obj",
+    "file": "unPackDecVar_terminate.c",
+    "output": "build/win64/unPackDecVar_terminate.obj"
+  },
+  {
+    "directory": "D:\\dev\\DynamicLaptimeSim\\v2\\4WM_PLANAR_7DOF\\+Utilities\\codegen\\mex\\unPackDecVar",
+    "command": "cl /c /Zc:__cplusplus /Zp8 /GR /W3 /EHs /nologo /MD /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /D_SECURE_SCL=0   /DMATLAB_MEX_FILE  /DMATLAB_MEX_FILE /O2 /Oy- /DNDEBUG /fp:strict /utf-8 /I \".\" /I \"D:\\dev\\DynamicLaptimeSim\\v2\\4WM_PLANAR_7DOF\\+Utilities\" /I \".\\interface\" /I \"D:\\Program Files\\MATLAB\\extern\\include\" /I \".\" -DMODEL=unPackDecVar_mex   unPackDecVar.c /Fobuild\\win64\\unPackDecVar.obj",
+    "file": "unPackDecVar.c",
+    "output": "build/win64/unPackDecVar.obj"
+  },
+  {
+    "directory": "D:\\dev\\DynamicLaptimeSim\\v2\\4WM_PLANAR_7DOF\\+Utilities\\codegen\\mex\\unPackDecVar",
+    "command": "cl /c /Zc:__cplusplus /Zp8 /GR /W3 /EHs /nologo /MD /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /D_SECURE_SCL=0   /DMATLAB_MEX_FILE  /DMATLAB_MEX_FILE /O2 /Oy- /DNDEBUG /fp:strict /utf-8 /I \".\" /I \"D:\\dev\\DynamicLaptimeSim\\v2\\4WM_PLANAR_7DOF\\+Utilities\" /I \".\\interface\" /I \"D:\\Program Files\\MATLAB\\extern\\include\" /I \".\" -DMODEL=unPackDecVar_mex   indexShapeCheck.c /Fobuild\\win64\\indexShapeCheck.obj",
+    "file": "indexShapeCheck.c",
+    "output": "build/win64/indexShapeCheck.obj"
+  },
+  {
+    "directory": "D:\\dev\\DynamicLaptimeSim\\v2\\4WM_PLANAR_7DOF\\+Utilities\\codegen\\mex\\unPackDecVar",
+    "command": "cl /c /Zc:__cplusplus /Zp8 /GR /W3 /EHs /nologo /MD /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /D_SECURE_SCL=0   /DMATLAB_MEX_FILE  /DMATLAB_MEX_FILE /O2 /Oy- /DNDEBUG /fp:strict /utf-8 /I \".\" /I \"D:\\dev\\DynamicLaptimeSim\\v2\\4WM_PLANAR_7DOF\\+Utilities\" /I \".\\interface\" /I \"D:\\Program Files\\MATLAB\\extern\\include\" /I \".\" -DMODEL=unPackDecVar_mex   interface\\_coder_unPackDecVar_api.c /Fobuild\\win64\\_coder_unPackDecVar_api.obj",
+    "file": "interface/_coder_unPackDecVar_api.c",
+    "output": "build/win64/_coder_unPackDecVar_api.obj"
+  },
+  {
+    "directory": "D:\\dev\\DynamicLaptimeSim\\v2\\4WM_PLANAR_7DOF\\+Utilities\\codegen\\mex\\unPackDecVar",
+    "command": "cl /c /Zc:__cplusplus /Zp8 /GR /W3 /EHs /nologo /MD /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /D_SECURE_SCL=0   /DMATLAB_MEX_FILE  /DMATLAB_MEX_FILE /O2 /Oy- /DNDEBUG /fp:strict /utf-8 /I \".\" /I \"D:\\dev\\DynamicLaptimeSim\\v2\\4WM_PLANAR_7DOF\\+Utilities\" /I \".\\interface\" /I \"D:\\Program Files\\MATLAB\\extern\\include\" /I \".\" -DMODEL=unPackDecVar_mex   interface\\_coder_unPackDecVar_mex.c /Fobuild\\win64\\_coder_unPackDecVar_mex.obj",
+    "file": "interface/_coder_unPackDecVar_mex.c",
+    "output": "build/win64/_coder_unPackDecVar_mex.obj"
+  },
+  {
+    "directory": "D:\\dev\\DynamicLaptimeSim\\v2\\4WM_PLANAR_7DOF\\+Utilities\\codegen\\mex\\unPackDecVar",
+    "command": "cl /c /Zc:__cplusplus /Zp8 /GR /W3 /EHs /nologo /MD /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /D_SECURE_SCL=0   /DMATLAB_MEX_FILE  /DMATLAB_MEX_FILE /O2 /Oy- /DNDEBUG /fp:strict /utf-8 /I \".\" /I \"D:\\dev\\DynamicLaptimeSim\\v2\\4WM_PLANAR_7DOF\\+Utilities\" /I \".\\interface\" /I \"D:\\Program Files\\MATLAB\\extern\\include\" /I \".\" -DMODEL=unPackDecVar_mex   unPackDecVar_emxutil.c /Fobuild\\win64\\unPackDecVar_emxutil.obj",
+    "file": "unPackDecVar_emxutil.c",
+    "output": "build/win64/unPackDecVar_emxutil.obj"
+  },
+  {
+    "directory": "D:\\dev\\DynamicLaptimeSim\\v2\\4WM_PLANAR_7DOF\\+Utilities\\codegen\\mex\\unPackDecVar",
+    "command": "cl /c /Zc:__cplusplus /Zp8 /GR /W3 /EHs /nologo /MD /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /D_SECURE_SCL=0   /DMATLAB_MEX_FILE  /DMATLAB_MEX_FILE /O2 /Oy- /DNDEBUG /fp:strict /utf-8 /I \".\" /I \"D:\\dev\\DynamicLaptimeSim\\v2\\4WM_PLANAR_7DOF\\+Utilities\" /I \".\\interface\" /I \"D:\\Program Files\\MATLAB\\extern\\include\" /I \".\" -DMODEL=unPackDecVar_mex   interface\\_coder_unPackDecVar_info.c /Fobuild\\win64\\_coder_unPackDecVar_info.obj",
+    "file": "interface/_coder_unPackDecVar_info.c",
+    "output": "build/win64/_coder_unPackDecVar_info.obj"
+  },
+  {
+    "directory": "D:\\dev\\DynamicLaptimeSim\\v2\\4WM_PLANAR_7DOF\\+Utilities\\codegen\\mex\\unPackDecVar",
+    "command": "cl /c /Zc:__cplusplus /Zp8 /GR /W3 /EHs /nologo /MD /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /D_SECURE_SCL=0   /DMATLAB_MEX_FILE  /DMATLAB_MEX_FILE /O2 /Oy- /DNDEBUG /fp:strict /utf-8 /I \".\" /I \"D:\\dev\\DynamicLaptimeSim\\v2\\4WM_PLANAR_7DOF\\+Utilities\" /I \".\\interface\" /I \"D:\\Program Files\\MATLAB\\extern\\include\" /I \".\" -DMODEL=unPackDecVar_mex   \"D:\\Program Files\\MATLAB\\extern\\version\\c_mexapi_version.c\" /Fobuild\\win64\\c_mexapi_version.obj",
+    "file": "D:/Program Files/MATLAB/extern/version/c_mexapi_version.c",
+    "output": "build/win64/c_mexapi_version.obj"
+  }
+]
