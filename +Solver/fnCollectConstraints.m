@@ -1,4 +1,4 @@
-function [c, ceq] = fnCollectConstraints(defects,g,q,x,u)
+function [c, ceq] = fnCollectConstraints(defects,g,q,x,u,fuel_consumption,fuel_constraint)
 
 % collect deffects from collocation method to put in the ceq matrix of
 % fmincon
@@ -22,6 +22,10 @@ ceq_terminal = [x(1,end) x(2,end) u(3,end) u(4,end)];
 % slip stiffness 
 c = reshape(g,numel(g),1);
 
+if fuel_constraint ~= -1
+    c = [c; fuel_consumption-fuel_constraint];
+end
+
 % inequality constraint so the initial velocity of the lap isn't too far
 % from the final 
 % c_if = [abs(x(3,1)-x(3,end))-1,... % long vel
@@ -32,10 +36,10 @@ c = reshape(g,numel(g),1);
 %         abs(x(11,1)-x(11,end))-0.05,... % tau
 %         abs(u(3:4,1)'-u(3:4,end)')-0.05]'; % load trans var
 
-c_if = [0*abs(x(3,1)-x(3,end))-1,... % long vel
-        0*abs(x(4:5,1)'-x(4:5,end)')-1,... % lat vel and yaw rate
-        0*abs(x(6:7,1)'-x(6:7,end)')/0.330-1,...% front wheel speeds
-        0*abs(x(8:9,1)'-x(8:9,end)')/0.330-1]';% rear wheel speeds
+c_if = [abs(x(3,1)-x(3,end))-1,... % long vel
+        abs(x(4:5,1)'-x(4:5,end)')-1,... % lat vel and yaw rate
+        abs(x(6:7,1)'-x(6:7,end)')/0.330-1,...% front wheel speeds
+        abs(x(8:9,1)'-x(8:9,end)')/0.330-1]';% rear wheel speeds
 
 % c_if = abs(x(3,1)-x(3,end))-1;
 % c_if = [];

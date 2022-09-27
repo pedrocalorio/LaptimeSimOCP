@@ -1,4 +1,4 @@
-function [problem] = fnInitBounds(problem,optimalDesignFlag)
+function [problem] = fnInitBounds(problem)
 
 TrackWidth = problem.dsSystem.td.TrackWidth;
 
@@ -36,7 +36,7 @@ problem.bounds.initialControl.upp = [ 0.001  0.1  inf  inf]';
 problem.bounds.finalControl.low = [-0.001 -0.1 -inf -inf]';
 problem.bounds.finalControl.upp = [ 0.001  0.1  inf  inf]';
 
-if optimalDesignFlag == true                            
+if problem.options.optimalDesignFlag == true                            
 
     problem.bounds.design.low = [0.40 0.35 0.40 0.55]';
     problem.bounds.design.upp = [0.50 0.50 0.75 0.80]';
@@ -47,7 +47,12 @@ else
 
     problem.bounds.design.upp = []';
 
+end
 
+if problem.options.fuelSavingFlag == true
+    problem.bounds.fuel_consumption = 1.2405*0.75;
+else
+    problem.bounds.fuel_consumption = -1;
 end
 
 

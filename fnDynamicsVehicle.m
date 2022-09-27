@@ -1,4 +1,4 @@
-function [dx,g_ineq,q_eq,O] = fnDynamicsVehicle(~,x,u,Vehicle,p)
+function [dx,g_ineq,q_eq,O,constraint_fuel_saving] = fnDynamicsVehicle(~,x,u,Vehicle,p,Track,x_track)
 
     % This function returns the dynamics of the car IN TIME
     dx = zeros(9,length(x(1,:)));
@@ -6,7 +6,7 @@ function [dx,g_ineq,q_eq,O] = fnDynamicsVehicle(~,x,u,Vehicle,p)
     % Gravity constant
     g = 9.81;
     
-    %% Vehicle states
+    %% System states
     vx      = x(1,:); % velocity
     vy      = x(2,:); % body-slip angle
     r       = x(3,:); %yaw rate
@@ -16,12 +16,17 @@ function [dx,g_ineq,q_eq,O] = fnDynamicsVehicle(~,x,u,Vehicle,p)
     omega4  = x(7,:);
     steer   = x(8,:); 
     tau     = x(9,:); 
+    n  = x_track(1,:);
+    xi = x_track(2,:);
     
     %% Control inputs
     steerRate   = u(1,:);
     tauRate     = u(2,:);
     LongLT_norm = u(3,:);
-    LatLT_norm  = u(4,:);               
+    LatLT_norm  = u(4,:);             
+
+    % Sf
+    Sf = (1 - n.*Track.curv)./(vx.*cos(xi)-vy.*sin(xi));
     
     %% Design parameters of the car
     
@@ -230,30 +235,37 @@ function [dx,g_ineq,q_eq,O] = fnDynamicsVehicle(~,x,u,Vehicle,p)
     dx(9,:) = tauRate;
        
     
-    %% output for the constraints    
-%     IndexCorner = find(Track.curv>0.00001);
-%     IndexStraightLine = find(Track.curv<0.00001);
-%     sLapFullT = Track.sLap([])
+    %% output for the constraints  
     
     % equality constraints on load transfer
     q1  = ((Fx.*CoG)./(wheelbase.*m.*g)) - LongLT_norm;
     q2  = ((Fy.*CoG)./(0.5*(frontTrack+rearTrack).*m.*g)) - LatLT_norm;
-%     q1  = ((dx(1,:)*m*CoG)./(wheelbase*m*g)) - LongLT_norm;
-%     q2  = ((dx(2,:)*m*CoG)./(0.5*(frontTrack+rearTrack)*m*g)) - LatLT_norm;
     
     q_eq = zeros(2,length(x(1,:)));  
     q_eq(1,:) = q1;
     q_eq(2,:) = q2;
 
 
-
 %     % inequality constraint on maximum power available in powertrain
 %     g1_ineq = (Te.*((omega3+omega4)./2) ) - Pe;
 %     
 %     
+
+    % Inequality constraint on fuel saving 
+    we = (omega3 + omega4)/2;
+    fTauPos = tau .* (tanh(100*tau) + 1)/2;
+    Te = fTauPos.*( Vehicle.engine.maximum_power./we ); 
+    n_diesel = 0.40; % combustion efficiency
+    e_diesel = 45e6; % energy density [J/kg] 
+    
+    mass_flow = (1/(n_diesel*e_diesel)).*Te.*we; %[kg/s]
+    
+    constraint_fuel_saving = trapz(Track.sLap, (Sf.*mass_flow) ) ;
+
+
     % Inequality constraints on tire saturation
-    epsKap = 1e-4;
-    epsAlp = 1e-4;
+    epsKap = 1e-5;
+    epsAlp = 1e-5;
     
     [Fx1_t,~,~]     = Solver.MF5ss_eval(Fz1,kappa1 + epsKap,alpha1,0,MF_f);
     [Fx2_t,~,~]     = Solver.MF5ss_eval(Fz2,kappa2 + epsKap,alpha2,0,MF_f);    
@@ -310,6 +322,7 @@ function [dx,g_ineq,q_eq,O] = fnDynamicsVehicle(~,x,u,Vehicle,p)
     g_ineq(6,:) = -C_y_4;
     g_ineq(7,:) = -C_x_3;
     g_ineq(8,:) = -C_x_4;
+%     g_ineq(9,:) = constraint_fuel_saving;
 %     g_ineq(9,:) = -stbi ;
 %     g_ineq(9:10,:) = eigenvalues;
 
@@ -317,38 +330,54 @@ function [dx,g_ineq,q_eq,O] = fnDynamicsVehicle(~,x,u,Vehicle,p)
     wheel_linear_speed_2 = omega2*Rl2;
     wheel_linear_speed_3 = omega3*Rl3;
     wheel_linear_speed_4 = omega4*Rl4;
-    
-    long_sliding_speed_1 = wheel_linear_speed_1.*kappa1;
-    long_sliding_speed_2 = wheel_linear_speed_2.*kappa2;
-    long_sliding_speed_3 = wheel_linear_speed_3.*kappa3;
-    long_sliding_speed_4 = wheel_linear_speed_4.*kappa4;
 
-    lat_sliding_speed_1 = wheel_linear_speed_1.*tan(alpha1);
-    lat_sliding_speed_2 = wheel_linear_speed_2.*tan(alpha2);
-    lat_sliding_speed_3 = wheel_linear_speed_3.*tan(alpha3);
-    lat_sliding_speed_4 = wheel_linear_speed_4.*tan(alpha4);
+    long_sliding_speed_1 = ( (wheel_linear_speed_1.*cos(alpha1))-omega1*Rl1)-1;
+    long_sliding_speed_2 = ( (wheel_linear_speed_2.*cos(alpha2))-omega1*Rl2)-1;
+    long_sliding_speed_3 = ( (wheel_linear_speed_3.*cos(alpha3))-omega1*Rl3)-1;
+    long_sliding_speed_4 = ( (wheel_linear_speed_4.*cos(alpha4))-omega1*Rl4)-1;
+    
+%     long_sliding_speed_1 = Vxfl.*kappa1;
+%     long_sliding_speed_2 = Vxfr.*kappa2;
+%     long_sliding_speed_3 = Vxrl.*kappa3;
+%     long_sliding_speed_4 = Vxrr.*kappa4;
+
+    lat_sliding_speed_1 = -wheel_linear_speed_1.*sin(alpha1);
+    lat_sliding_speed_2 = -wheel_linear_speed_2.*sin(alpha2);
+    lat_sliding_speed_3 = -wheel_linear_speed_3.*sin(alpha3);
+    lat_sliding_speed_4 = -wheel_linear_speed_4.*sin(alpha4);
+
+%     lat_sliding_speed_1 = Vyfl.*tan(alpha1);
+%     lat_sliding_speed_2 = Vyfr.*tan(alpha2);
+%     lat_sliding_speed_3 = Vyrl.*tan(alpha3);
+%     lat_sliding_speed_4 = Vyrr.*tan(alpha4);
 
     sliding_power_lateral_1 = lat_sliding_speed_1 .* Fy1 ; %[w]
     sliding_energy_lateral_1 = cumtrapz(abs(sliding_power_lateral_1));
+
     sliding_power_lateral_2 = lat_sliding_speed_2 .* Fy2 ; %[w]
     sliding_energy_lateral_2 = cumtrapz(abs(sliding_power_lateral_2));
+
     sliding_power_lateral_3 = lat_sliding_speed_3 .* Fy3 ; %[w]
     sliding_energy_lateral_3 = cumtrapz(abs(sliding_power_lateral_3));
+
     sliding_power_lateral_4 = lat_sliding_speed_4 .* Fy4 ; %[w]
     sliding_energy_lateral_4 = cumtrapz(abs(sliding_power_lateral_4));
 
     sliding_power_longitudinal_1 = long_sliding_speed_1 .* Fx1 ; %[w]
     sliding_energy_longitudinal_1 = cumtrapz(abs(sliding_power_longitudinal_1));
+
     sliding_power_longitudinal_2 = long_sliding_speed_2 .* Fx2 ; %[w]
     sliding_energy_longitudinal_2 = cumtrapz(abs(sliding_power_longitudinal_2));
+
     sliding_power_longitudinal_3 = long_sliding_speed_3 .* Fx3 ; %[w]
     sliding_energy_longitudinal_3 = cumtrapz(abs(sliding_power_longitudinal_3));
+    
     sliding_power_longitudinal_4 = long_sliding_speed_4 .* Fx4 ; %[w]
     sliding_energy_longitudinal_4 = cumtrapz(abs(sliding_power_longitudinal_4));
 
     
     
-    O = zeros(43,length(x(1,:))); 
+    O = zeros(44,length(x(1,:))); 
     O(1,:) = Fx/m;
     O(2,:) = Fy/m;
     O(3,:) = deltaFzf_lat;
@@ -391,5 +420,6 @@ function [dx,g_ineq,q_eq,O] = fnDynamicsVehicle(~,x,u,Vehicle,p)
     O(40,:) = YMfromMz;
     O(41,:) = stbi;
     O(42:43,:) = eigenvalues;
+    O(44,:) = mass_flow;
 
 end

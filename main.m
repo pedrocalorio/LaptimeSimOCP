@@ -17,7 +17,7 @@ problem.options.optimalDesignFlag = optimalDesignFlag;
 %% Get initial estimate
 % You need an initial guess for solving the BVP
 
-problem = PreProcessing.fnGetInitialEstimate(problem, 'PreSim');
+problem = PreProcessing.fnGetInitialEstimate(problem, 'Load');
 
 %% Set solver options and solve the Minimum Time Maneuvre 
 

@@ -11,6 +11,8 @@ nDesign = length(problem.bounds.design.low);
 Track   = problem.dsSystem.td;
 Vehicle = problem.dsSystem.vd;
 
+fuelConsunptionLimit = problem.bounds.fuel_consumption;
+
 %%  Pack the initial guess
 
 [zGuess, pack] = Utilities.packDecVar_mex(problem.guess.state, problem.guess.control);
@@ -43,7 +45,7 @@ end
 %% Set up the functions, bounds, and options for fmincon
 
 P.objective = @(z)( myObjective(z, pack, F.weights, Track, nDesign) );
-P.nonlcon   = @(z)( myConstraint(z, pack, F.defectCst, Track, Vehicle, nDesign) );
+P.nonlcon   = @(z)( myConstraint(z, pack, F.defectCst, Track, Vehicle, nDesign, fuelConsunptionLimit) );
 
 P.x0 = zGuess;
 P.lb = zLow;
@@ -126,7 +128,7 @@ end
 
 %% Constraint Function
 
-function [c, ceq] = myConstraint(z,pack,defectCst,Track,Vehicle,nDesign)
+function [c, ceq] = myConstraint(z,pack,defectCst,Track,Vehicle,nDesign,fuelConsunptionLimit)
 % This function computes the defects along the path
 % and then evaluates the user-defined constraint functions
 
@@ -158,11 +160,12 @@ end
 %                                             u,...
 %                                             Vehicle,...
 %                                             vehicle_design_variables);
-[dx_vehicle,g,q,~] = fnDynamicsVehicle([],...
+[dx_vehicle,g,q,~,fuelConsumption] = fnDynamicsVehicle([],...
                                             vehicle_states,...
                                             u,...
                                             Vehicle,...
-                                            vehicle_design_variables);
+                                            vehicle_design_variables, ...
+                                            Track,track_states);
 
 
 % Calculates the conversion factor for the transformation, which is the
@@ -182,7 +185,8 @@ dx = [dx_track; dx_vehicle];
 defects = defectCst(ds,x,dx);
 
 % Call user-defined constraints and combine with defects
-[c, ceq] = Solver.fnCollectConstraints(defects,g,q,x,u);
+[c, ceq] = Solver.fnCollectConstraints(defects,g,q,x,u,...
+                                        fuelConsumption,fuelConsunptionLimit);
 
 
 end

@@ -5,7 +5,7 @@ switch sMethod
         %
 %         customGuess = load([cd, '\+SimResults\girish tire model\BAR0_hs_300pts_no_engine_model_OD.mat']);
 %         customGuess = load([cd, '\+SimResults\BAR_optimization_trap_1050pts_no_engine_model_NO_opt_des_base_v2_up.mat']);
-        customGuess = load([cd, '\+SimResults\sensitivity - lltd\v2\BAR_optimization_trap_700pts_44lltd_eigconst.mat']);
+        customGuess = load([cd, '\SimResults\fuji_lmp2_500pts_fuel_saving_v2\fuji_lmp2_500pts_fuel_saving_v2.mat']);
 
         sLap = customGuess.soln.grid.sLap;
 

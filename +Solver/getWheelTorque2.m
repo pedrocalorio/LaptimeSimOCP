@@ -25,6 +25,7 @@ function [Torque_FL,Torque_FR,Torque_RL,Torque_RR,fTauPos,fTauNeg]  = getWheelTo
 
     Pe = P_max;
     
+    omega_e = (omega3 + omega4)/2;
     Te = fTauPos.*( (2*Pe./(omega3 + omega4)) );   
 %     Te = fTauPos.*( (Pe./omega_e) - Te_drag);   
 %     Te = fTauPos.*( (Pe./(omega_e)) - Te_drag);   

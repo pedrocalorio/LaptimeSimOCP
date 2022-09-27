@@ -86,98 +86,47 @@ else
         otherwise
             error('Invalid method.');
     end
+
+    % reads the telemetry data used to re-construct the centerline
+    data = readmatrix("+TelemetryData\#35_QUA_RUN001-ML_22_09_10_FUJI.csv");
     
-%     % Import track from data
-%     trackData = readtable('Nurburgring');
+   
+    % define the track width
+    track_width = 10; %m
+    
+    % calls the function that generates the track
+    Track = generate_track_from_telemetry(data,nGrid,track_width);
+  
+%     % BARCELONA
+% 
+%     load('BAR')
+%     
 %     
 %     Track = struct();
-%     td = struct();
-% 
-%     nPoints = 1500;
-%     Track.sLap = trackData.CorrLapDist';
-% 
-%     Track.TrackWidth = 8;
 %     
-%     Track.sLap = linspace(0,Track.sLap(end),nPoints);
-%     Track.curv = interp1(trackData.CorrLapDist',...
-%                       trackData.MathInverseCornerRadius',...
-%                       Track.sLap,'linear','extrap');
-%                   
-%     Track.curv_nosmooth = Track.curv;
+%     Track.TrackWidth = Track.TrackWidth;
 %     
-%     Track.d_sLap   = [diff(Track.sLap), Track.sLap(end) - Track.sLap(end-1)];
-%     Track.aYaw  	= cumsum(Track.curv.*Track.d_sLap);
-%     td.xCar 	= cumsum(Track.d_sLap.*cos(Track.aYaw));
-%     td.yCar 	= cumsum(Track.d_sLap.*sin(Track.aYaw));
-% 
-%     % here we have the track centerline with initial and end not together
-% 
-%     % calculate delta y and delta x
-%     deltaX = (td.xCar(1) - td.xCar(end))/nPoints;
-%     deltaY = (td.yCar(1) - td.yCar(end))/nPoints;
-%     % put these delta x and y into the "new" x and y position
-% %     td.xCar = td.xCar - deltaX;
-% %     td.yCar = td.yCar - deltaY;
-%     td.xCar = cumsum(td.xCar-td.xCar*deltaX);
-%     td.yCar = cumsum(td.yCar-td.yCar*deltaY);
-% 
-%     % calculates the delta heading angle
-%     newaYaw = atan(deltaY/deltaX)/nPoints;
-% 
-%     % updates it in the "old" heading angle
-%     Track.Angle = Track.aYaw - newaYaw;
-%     % then we have the final x and y coordinate
-%     Track.XCoord 	= cumsum(Track.d_sLap.*cos(Track.Angle));
-%     Track.YCoord 	= cumsum(Track.d_sLap.*sin(Track.Angle));
-% 
-%     Track.XCoordLeft = Track.XCoord + Track.TrackWidth/2*gradient(Track.YCoord)./(gradient(Track.XCoord).^2 + gradient(Track.YCoord).^2).^0.5;
-%     Track.YCoordLeft = Track.YCoord - Track.TrackWidth/2*gradient(Track.XCoord)./(gradient(Track.XCoord).^2 + gradient(Track.YCoord).^2).^0.5;
-%     Track.XCoordRight = Track.XCoord - Track.TrackWidth/2*gradient(Track.YCoord)./(gradient(Track.XCoord).^2 + gradient(Track.YCoord).^2).^0.5;
-%     Track.YCoordRight = Track.YCoord + Track.TrackWidth/2*gradient(Track.XCoord)./(gradient(Track.XCoord).^2 + gradient(Track.YCoord).^2).^0.5;
-% 
-%     td.TrackWidth = Track.TrackWidth;
-%     td.sLap = linspace(Track.sLap(1),Track.sLap(end),nGrid);
-%     td.curv = interp1(Track.sLap,Track.curv,td.sLap);
-%     td.curv_nonsmooth = td.curv;
-%     td.d_sLap   = [diff(td.sLap), td.sLap(end) - td.sLap(end-1)];
-%     td.aYaw  	= interp1(Track.sLap,Track.Angle,td.sLap);
-%     td.xCar 	= interp1(Track.sLap,Track.XCoord,td.sLap);
-%     td.yCar 	= interp1(Track.sLap,Track.YCoord,td.sLap);
-%     td.xCarLeft = interp1(Track.sLap,Track.XCoordLeft,td.sLap);
-%     td.yCarLeft = interp1(Track.sLap,Track.YCoordLeft,td.sLap);
-%     td.xCarRight = interp1(Track.sLap,Track.XCoordRight,td.sLap);
-%     td.yCarRight = interp1(Track.sLap,Track.YCoordRight,td.sLap); 
-
-    % BARCELONA
-
-    load('BAR')
-    
-    
-    td = struct();
-    
-    td.TrackWidth = Track.TrackWidth;
-    
-    td.sLap = linspace(Track.sLap(1),Track.sLap(end),nGrid);
-    td.curv = interp1(Track.sLap,Track.rCurv,td.sLap);
-    td.curv_nonsmooth = td.curv;
-    td.d_sLap   = [diff(td.sLap), td.sLap(end) - td.sLap(end-1)];
-    td.aYaw  	= interp1(Track.sLap,Track.Angle,td.sLap);
-    td.xCar 	= interp1(Track.sLap,Track.XCoord,td.sLap);
-    td.yCar 	= interp1(Track.sLap,Track.YCoord,td.sLap);
-    td.xCarLeft = interp1(Track.sLap,Track.XCoordLeft,td.sLap);
-    td.yCarLeft = interp1(Track.sLap,Track.YCoordLeft,td.sLap);
-    td.xCarRight = interp1(Track.sLap,Track.XCoordRight,td.sLap);
-    td.yCarRight = interp1(Track.sLap,Track.YCoordRight,td.sLap); 
+%     Track.sLap = linspace(Track.sLap(1),Track.sLap(end),nGrid);
+%     Track.curv = interp1(Track.sLap,Track.rCurv,td.sLap);
+%     Track.curv_nonsmooth = td.curv;
+%     Track.d_sLap   = [diff(td.sLap), td.sLap(end) - td.sLap(end-1)];
+%     Track.aYaw  	= interp1(Track.sLap,Track.Angle,td.sLap);
+%     Track.xCar 	= interp1(Track.sLap,Track.XCoord,td.sLap);
+%     Track.yCar 	= interp1(Track.sLap,Track.YCoord,td.sLap);
+%     Track.xCarLeft = interp1(Track.sLap,Track.XCoordLeft,td.sLap);
+%     Track.yCarLeft = interp1(Track.sLap,Track.YCoordLeft,td.sLap);
+%     Track.xCarRight = interp1(Track.sLap,Track.XCoordRight,td.sLap);
+%     Track.yCarRight = interp1(Track.sLap,Track.YCoordRight,td.sLap); 
 
 
     
-    problem.dsSystem.td = td;
+    problem.dsSystem.td = Track;
 end
 
 %% Plot the track definition
 
 if bPlotTrackDef
-    fnPlotTrackDefinition(td);
+    fnPlotTrackDefinition(problem.dsSystem.td);
 end
 
 end
