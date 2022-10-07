@@ -36,8 +36,11 @@ problem.bounds.initialControl.upp = [ 0.001  0.1  inf  inf]';
 problem.bounds.finalControl.low = [-0.001 -0.1 -inf -inf]';
 problem.bounds.finalControl.upp = [ 0.001  0.1  inf  inf]';
 
+%% defines the lower and upper bounds on the values admissible by the optimizer when optimizing the vehicle parameters 
+
 if problem.options.optimalDesignFlag == true                            
 
+    % [weight distribution, downforce distribution, lateral load transfer distribution, brake torque distribution]
     problem.bounds.design.low = [0.40 0.35 0.40 0.55]';
     problem.bounds.design.upp = [0.50 0.50 0.75 0.80]';
     
@@ -49,10 +52,20 @@ else
 
 end
 
+%% defines the value of the maximum fuel consumption admissible 
+
 if problem.options.fuelSavingFlag == true
     problem.bounds.fuel_consumption = 1.2405*0.75;
 else
     problem.bounds.fuel_consumption = -1;
+end
+
+%% defines the value of the maximum total tire energy dissipated in a lap admissible 
+
+if problem.options.tireEnergySavingFlag == true
+    problem.bounds.tire_energy = 6.0095e04*0.70;
+else
+    problem.bounds.tire_energy = -1;
 end
 
 

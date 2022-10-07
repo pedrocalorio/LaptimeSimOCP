@@ -11,7 +11,8 @@ nDesign = length(problem.bounds.design.low);
 Track   = problem.dsSystem.td;
 Vehicle = problem.dsSystem.vd;
 
-fuelConsunptionLimit = problem.bounds.fuel_consumption;
+savingConstraintsBounds.fuel = problem.bounds.fuel_consumption;
+savingConstraintsBounds.tire_energy = problem.bounds.tire_energy;
 
 %%  Pack the initial guess
 
@@ -45,7 +46,7 @@ end
 %% Set up the functions, bounds, and options for fmincon
 
 P.objective = @(z)( myObjective(z, pack, F.weights, Track, nDesign) );
-P.nonlcon   = @(z)( myConstraint(z, pack, F.defectCst, Track, Vehicle, nDesign, fuelConsunptionLimit) );
+P.nonlcon   = @(z)( myConstraint(z, pack, F.defectCst, Track, Vehicle, nDesign, savingConstraintsBounds) );
 
 P.x0 = zGuess;
 P.lb = zLow;
@@ -89,7 +90,8 @@ ds = (sLap(end) - sLap(1)) / (pack.nGrid - 1);
 integrand = Controller.fnObjective(xSoln,Track);   % Calculate the integrand of the cost function
 
 % Calculate laptime via integration
-laptime = ds*integrand*ones(length(integrand),1);  % Integration
+% laptime = ds*integrand*ones(length(integrand),1);  % Integration
+laptime = trapz(Track.sLap,integrand);  % Integration
 
 soln.info.laptime = laptime;
 soln.info.objVal  = sqrt(objVal);
@@ -128,7 +130,7 @@ end
 
 %% Constraint Function
 
-function [c, ceq] = myConstraint(z,pack,defectCst,Track,Vehicle,nDesign,fuelConsunptionLimit)
+function [c, ceq] = myConstraint(z,pack,defectCst,Track,Vehicle,nDesign,savingConstraintsBound)
 % This function computes the defects along the path
 % and then evaluates the user-defined constraint functions
 
@@ -155,12 +157,8 @@ end
 
 
 % gets the vehicle states derivative IN TIME
-% [dx_vehicle,g,q,~] = Controller.fnDynamicsVehicle_mex([],...
-%                                             vehicle_states,...
-%                                             u,...
-%                                             Vehicle,...
-%                                             vehicle_design_variables);
-[dx_vehicle,g,q,~,fuelConsumption] = fnDynamicsVehicle([],...
+
+[dx_vehicle,g,q,~,saving_constraints] = Controller.fnDynamicsVehicle([],...
                                             vehicle_states,...
                                             u,...
                                             Vehicle,...
@@ -186,7 +184,7 @@ defects = defectCst(ds,x,dx);
 
 % Call user-defined constraints and combine with defects
 [c, ceq] = Solver.fnCollectConstraints(defects,g,q,x,u,...
-                                        fuelConsumption,fuelConsunptionLimit);
+                                        saving_constraints,savingConstraintsBound);
 
 
 end

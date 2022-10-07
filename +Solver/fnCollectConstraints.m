@@ -1,4 +1,4 @@
-function [c, ceq] = fnCollectConstraints(defects,g,q,x,u,fuel_consumption,fuel_constraint)
+function [c, ceq] = fnCollectConstraints(defects,g,q,x,u,saving_constraints,saving_constraints_bound)
 
 % collect deffects from collocation method to put in the ceq matrix of
 % fmincon
@@ -20,10 +20,15 @@ ceq_terminal = [x(1,end) x(2,end) u(3,end) u(4,end)];
 
 % inequality constraints on having always positve cornering stiffness and
 % slip stiffness 
-c = reshape(g,numel(g),1);
+% c = reshape(g,numel(g),1);
+c = [];
 
-if fuel_constraint ~= -1
-    c = [c; fuel_consumption-fuel_constraint];
+if saving_constraints_bound.fuel ~= -1
+    c = [c; saving_constraints.fuel-saving_constraints_bound.fuel];
+end
+
+if saving_constraints_bound.tire_energy ~= -1
+    c = [c; saving_constraints.tire_energy-saving_constraints_bound.tire_energy];
 end
 
 % inequality constraint so the initial velocity of the lap isn't too far

@@ -1,11 +1,12 @@
-function [problem] = fnInitMethod(sMethod,optimalDesignFlag,fuelSavingFlag)
+function [problem] = fnInitMethod(sMethod,nOfPoints,...
+    optimalDesignFlag,fuelSavingFlag,tireEnergySavingFlag)
 
 problem = struct();
 problem.options.method = sMethod;
 
 switch problem.options.method
     case 'trapezoid'
-        problem.options.trapezoid.nGrid = 500;
+        problem.options.trapezoid.nGrid = nOfPoints;
     case 'hermiteSimpson'
         problem.options.hermiteSimpson.nSegment = 155;
     otherwise
@@ -15,7 +16,8 @@ end
 % optimalDesignFlag = false;
 % fuelSavingFlag    = true;
 
-problem.options.optimalDesignFlag = optimalDesignFlag; 
-problem.options.fuelSavingFlag    = fuelSavingFlag; 
+problem.options.optimalDesignFlag       = optimalDesignFlag; 
+problem.options.fuelSavingFlag          = fuelSavingFlag; 
+problem.options.tireEnergySavingFlag    = tireEnergySavingFlag; 
 
 end
