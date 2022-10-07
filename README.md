@@ -49,6 +49,17 @@ Time[s] || Distance[m] || Speed[km/h] || Lateral Acceleration [g]
 The function generate_track_from_telemetry is responsible to do all the processing
 in which the track curvature, x, y and yaw_angle variables are going to be found
 
+### Initial Guess
+
+For this kind of simulation, an initial guess is required and this is defined in the function
+fnGetInitialEstimate. It can be defined as 'PreSim' in which the software is going to calculate
+a relatively poor initial guess and the optimizer might need more time until convergence or the
+other option is to used 'Load', in which the optimizer will use a previous completed simulation
+as initial guess. This can really speed up the process
+
+In general, if you are simulating a track for the first time, it is recommended to use the PreSim
+Otherwise, you should use Load options because it will significantly reduce time.
+
 ### Define what type of laptime simulation to run
 
 This program solves the minimum time of a given vehicle on a given track. However,

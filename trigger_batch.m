@@ -3,7 +3,7 @@ clear;
 clc;
 
 %% Defines the folder name where the simulations results will be stored.
-folder_name = 'FRANCE_LMP2_OPTIMIZED_500';
+folder_name = 'FRANCE_LMP2_OPTIMIZED_450';
 
 % Folder path where the simulation results will be stored
 results_folder = [pwd '\' 'SimResults'];
@@ -40,7 +40,7 @@ for ii = 1:number_of_sims
     %         if the simulation will optimize vehicle parameters
     %         if the simulation contains fuel saving constraints
     %         if the simulation contains tire energy saving constraints
-    problem = Initialize.fnInitMethod('trapezoid',500,true,false,false);
+    problem = Initialize.fnInitMethod('trapezoid',450,true,false,false);
 
     problem = Initialize.fnInitVehicleSheet(problem,ii,setup_name4wm);
 

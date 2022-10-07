@@ -57,10 +57,10 @@ vehicle.tire_4.rr = TireRear.fr(index);
 % vehicle.tire_3.MF = mfeval.readTIR('637326_ISO_REAR.TIR');
 % vehicle.tire_4.MF = mfeval.readTIR('637326_ISO_REAR.TIR');
 
-vehicle.tire_1.MF = LMPTire_Front_26psi_v2();
-vehicle.tire_2.MF = LMPTire_Front_26psi_v2();
-vehicle.tire_3.MF = LMPTire_Rear_26psi_v2();
-vehicle.tire_4.MF = LMPTire_Rear_26psi_v2();
+vehicle.tire_1.MF = Model.LMPTire_Front_26psi_v2();
+vehicle.tire_2.MF = Model.LMPTire_Front_26psi_v2();
+vehicle.tire_3.MF = Model.LMPTire_Rear_26psi_v2();
+vehicle.tire_4.MF = Model.LMPTire_Rear_26psi_v2();
 
 % Diff
 
