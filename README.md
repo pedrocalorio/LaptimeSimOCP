@@ -15,12 +15,12 @@ template in "+Model/template.xlsx". In case you want to do a batch run with mult
 vehicles using different settings, you just add another entry in the sheet in a new
 row.
 
-When creating a new sheet, please put them inside the folder "+Model" because that
+When creating a new excel file, please put them inside the folder "+Model" because that
 is the folder the software will look for to load the vehicle parameter inputs.
 
 Two important comments:
 
-1. Tire model is loaded inside the sheet, but it is always loaded by referring to 
+1. Tire model is not loaded inside the sheet, instead it is always loaded by referring to 
 a script which loads all the tire model coefficients. You can check how that is working
 in the LMPTire_Front_26psi script.
 2. The engine map is loaded from an excel spreadsheet to and it is also inside the 
@@ -28,34 +28,38 @@ in the LMPTire_Front_26psi script.
 
 ### Loading the track
 
-The track is generated inside the script when calling the function fnInitTrack. For 
+The track is generated when calling the function fnInitTrack. For 
 this function you pass 3 arguments: the first is the problem struct which is going 
 to store all the information needed to solve the simulation. The second one is a 
 boolean flag if you want to plot the track layout, in case you want to see the plots for the
 track this should be set to "true". 
 
 Lastly, and more importantly, we have another boolean getting the
-information if the track is going to be re-created from data (set it to false) or
-if you want to construct an oval track created using mathematics and geometry 
-(set to true). 
+information whether the track is going to be re-created from telemetry data (set it to false) or
+if you want to construct an oval track using mathematics and geometry (set to true). 
 
 In case the option of re-constructing the track from data is chosen, it is needed 
-to go inside the function fnInitTrack, go on line 81 that reads the data and set
-the name of the csv file that containst this data. It is important that the format
+to go inside the function fnInitTrack, go on line 81 that will load the data and set
+the name of the .csv file that contains this data. It is important that the format
 of the sheet follows this order of channels:
 
 Time[s] || Distance[m] || Speed[km/h] || Lateral Acceleration [g]
 
 The function generate_track_from_telemetry is responsible to do all the processing
-in which the track curvature, x, y and yaw_angle variables are going to be found
+in which the track curvature, x, y and yaw_angle variables are going to be calculated
+and stored in the Track struct. Those variables are very important for the solver.
 
 ### Initial Guess
 
 For this kind of simulation, an initial guess is required and this is defined in the function
-fnGetInitialEstimate. It can be defined as 'PreSim' in which the software is going to calculate
-a relatively poor initial guess and the optimizer might need more time until convergence or the
-other option is to used 'Load', in which the optimizer will use a previous completed simulation
-as initial guess. This can really speed up the process
+fnGetInitialEstimate. 
+
+It can be defined as 'PreSim' in which the software is going to calculate
+a relatively poor initial guess and the optimizer might need more time until convergence. The
+other option is to use 'Load', in which the optimizer will use a previous simulation
+as initial guess. This can really speed up the process and could be useful if you already have 
+solved the laptime for that specific track and just want to simulate it again for a different
+vehicle setup.
 
 In general, if you are simulating a track for the first time, it is recommended to use the PreSim
 Otherwise, you should use Load options because it will significantly reduce time.
