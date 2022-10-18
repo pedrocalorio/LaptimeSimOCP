@@ -81,7 +81,7 @@ vehicle.engine.Power_R = EnginePowerMap.Power_R;
 vehicle.engine.Throttle = EnginePowerMap.Throttle;
 vehicle.engine.Power_T = EnginePowerMap.Power_T;
 
-vehicle.engine.Gr = Engine.final_gear_ratio(index); % gear ratio which is constant for the moment
+vehicle.engine.Gr = readmatrix("+Model\"+string(Engine.gear_ratio(index))); % gear ratio which is constant for the moment
 
 % Brake properties
 

@@ -191,8 +191,9 @@ function [dx,g_ineq,q_eq,O,saving_constraints] = fnDynamicsVehicle(~,x,u,Vehicle
     
     %% Wheel torques
 
-%     [Tfl,Tfr,Trl,Trr,throttle,brakes] = Solver.get_wheel_torque3(tau,Vehicle,x,p);
-    [Tfl,Tfr,Trl,Trr,throttle,brakes] = Solver.getWheelTorque2(tau,Vehicle,x,p);
+    [Tfl,Tfr,Trl,Trr,throttle,brakes,engine_speed,power_engine] = ...
+        Solver.get_wheel_torque3(tau,Vehicle,x,p);
+%     [Tfl,Tfr,Trl,Trr,throttle,brakes] = Solver.getWheelTorque2(tau,Vehicle,x,p);
     
     %% Calculates the states TIME derivative
     
@@ -389,6 +390,9 @@ function [dx,g_ineq,q_eq,O,saving_constraints] = fnDynamicsVehicle(~,x,u,Vehicle
     O(51,:) = sliding_power_longitudinal_2;
     O(52,:) = sliding_power_longitudinal_3;
     O(53,:) = sliding_power_longitudinal_4;
+    O(54,:) = engine_speed * 30/pi; %RPM
+    O(55,:) = power_engine / 745.7; %HP 
+    O(56,:) = throttle.*(power_engine./engine_speed); %engine torque
 
     %% saving constraints
     saving_constraints.fuel = fuel_usage;

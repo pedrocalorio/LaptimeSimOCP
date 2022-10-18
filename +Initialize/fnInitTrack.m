@@ -78,7 +78,7 @@ else
     end
 
     % reads the telemetry data used to re-construct the centerline
-    data = readmatrix("+TelemetryData\PaulRicard.csv");
+    data = readmatrix("+TelemetryData\Portimao Quali Lap.csv");
     
    
     % define the track width

@@ -109,7 +109,7 @@ grid minor
 
 % ax,ay and r
 figure; plotbrowser;
-plot(Track.sLap,ay./9.806,'LineWidth',2)
+plot(Track.sLap,ay./9.806,'LineWidth',2,'Color',[1 0.2 0])
 ylabel('Lateral Acceleration [g]','Interpreter','latex')
 xlabel('Distance [m]','Interpreter','latex')
 title('Lateral Acceleration','Interpreter','latex')
@@ -117,7 +117,7 @@ set(gca,'FontSize',14)
 grid minor
 
 figure; plotbrowser;
-plot(Track.sLap,ax./9.806,'LineWidth',2)
+plot(Track.sLap,ax./9.806,'LineWidth',2,'Color',[1 0.2 0])
 ylabel('Longitudinal Acceleration [g]','Interpreter','latex')
 xlabel('Distance [m]','Interpreter','latex')
 title('Longitudinal Acceleration','Interpreter','latex')
@@ -125,7 +125,7 @@ set(gca,'FontSize',14)
 grid minor
 
 figure; plotbrowser;
-plot(Track.sLap,sqrt((ay./9.806).^2+(ax./9.806).^2),'LineWidth',2,'Color',[1 0 0])
+plot(Track.sLap,sqrt((ay./9.806).^2+(ax./9.806).^2),'LineWidth',2,'Color',[1 0.2 0])
 ylabel('Combined Acceleration [g]','Interpreter','latex')
 xlabel('Distance [m]','Interpreter','latex')
 title('Combined Acceleration','Interpreter','latex')
@@ -134,7 +134,7 @@ grid minor
 %%
 
 % figure; plotbrowser;
-plot(ay./9.806,ax./9.806,'.','MarkerSize',12)
+plot(ay./9.806,ax./9.806,'.','MarkerSize',12,'Color',[1 0.2 0])
 title('g-g Diagram','Interpreter','latex')
 ylabel('Long G [g]','Interpreter','latex')
 xlabel('Lat G [g]','Interpreter','latex')
@@ -171,7 +171,7 @@ grid minor
 %% Steering
 
 figure; plotbrowser;
-plot(Track.sLap,rad2deg(x_star(10,:)),'LineWidth',2)
+plot(Track.sLap,rad2deg(x_star(10,:)),'LineWidth',2,'Color',[1 0.2 0])
 title('Optimal Steering Angle Profile','Interpreter','latex')
 ylabel('Steering Angle [deg]','Interpreter','latex')
 xlabel('Distance [m]','Interpreter','latex')
@@ -182,35 +182,35 @@ grid minor
 
 figure; plotbrowser;
 subplot(2,1,1)
-plot(Track.sLap,100.*Throttle,'LineWidth',2)
+plot(Track.sLap,100.*Throttle,'LineWidth',2,'Color',[1 0.2 0])
 ylabel('Percentage [\%]','Interpreter','latex')
 xlabel('Distance [m]','Interpreter','latex')
 title('Throttle Position Profile Comparison','Interpreter','latex')
 set(gca,'FontSize',14)
 grid minor
 subplot(2,1,2)
-plot(Track.sLap,-5000.*Brakes,'LineWidth',2)
-ylabel('Percentage [\%]','Interpreter','latex')
+plot(Track.sLap,-5000.*Brakes,'LineWidth',2,'Color',[1 0.2 0])
+ylabel('Torque [Nm]','Interpreter','latex')
 xlabel('Distance [m]','Interpreter','latex')
 title('Brake Torque Profile Comparison','Interpreter','latex')
 set(gca,'FontSize',14)
 grid minor
 
-%% control rates
-
-figure; plotbrowser;
-subplot(2,1,1)
-plot(Track.sLap,(u_star(1,:)))
-title('delta rate')
-subplot(2,1,2)
-plot(Track.sLap,(u_star(2,:)))
-title('tau rate')
+% %% control rates
+% 
+% figure; plotbrowser;
+% subplot(2,1,1)
+% plot(Track.sLap,(u_star(1,:)))
+% title('delta rate')
+% subplot(2,1,2)
+% plot(Track.sLap,(u_star(2,:)))
+% title('tau rate')
 
 %% Sliding energy lateral
 
 figure;plotbrowser;
 subplot(2,2,1)
-plot(Track.sLap,sliding_energy_lat1/1e3,'--','Color',[1 0 0],'LineWidth',2)
+plot(Track.sLap,sliding_energy_lat1/1e3,'--','LineWidth',2)
 title('Sliding Energy Lateral FL','Interpreter','latex')
 ylabel('Energy [kJ]','Interpreter','latex')
 xlabel('Distance [m]','Interpreter','latex')
@@ -218,7 +218,7 @@ grid minor
 set(gca,'FontSize',13)
 %%
 subplot(2,2,2)
-plot(Track.sLap,sliding_energy_lat2/1e3,'--','Color',[0 1 0],'LineWidth',2)
+plot(Track.sLap,sliding_energy_lat2/1e3,'--','LineWidth',2)
 title('Sliding Energy Lateral FR','Interpreter','latex')
 ylabel('Energy [kJ]','Interpreter','latex')
 xlabel('Distance [m]','Interpreter','latex')
@@ -226,7 +226,7 @@ grid minor
 set(gca,'FontSize',13)
 %%
 subplot(2,2,3)
-plot(Track.sLap,sliding_energy_lat3/1e3,'--','Color',[0.3 0.3 1],'LineWidth',2)
+plot(Track.sLap,sliding_energy_lat3/1e3,'--','LineWidth',2)
 title('Sliding Energy Lateral RL','Interpreter','latex')
 ylabel('Energy [kJ]','Interpreter','latex')
 xlabel('Distance [m]','Interpreter','latex')
@@ -234,7 +234,7 @@ grid minor
 set(gca,'FontSize',13)
 %%
 subplot(2,2,4)
-plot(Track.sLap,sliding_energy_lat4/1e3,'--','Color',[1 1 0.0],'LineWidth',2)
+plot(Track.sLap,sliding_energy_lat4/1e3,'--','LineWidth',2)
 title('Sliding Energy Lateral RR','Interpreter','latex')
 ylabel('Energy [kJ]','Interpreter','latex')
 xlabel('Distance [m]','Interpreter','latex')
@@ -245,7 +245,7 @@ set(gca,'FontSize',13)
 
 figure;plotbrowser;
 subplot(2,2,1)
-plot(Track.sLap,sliding_energy_long1/1e3,'--','Color',[1 0 0],'LineWidth',2)
+plot(Track.sLap,sliding_energy_long1/1e3,'--','LineWidth',2)
 title('Sliding Energy Longitudinal FL','Interpreter','latex')
 ylabel('Energy [kJ]','Interpreter','latex')
 xlabel('Distance [m]','Interpreter','latex')
@@ -253,7 +253,7 @@ grid minor
 set(gca,'FontSize',13)
 %%
 subplot(2,2,2)
-plot(Track.sLap,sliding_energy_long2/1e3,'--','Color',[0 1 0],'LineWidth',2)
+plot(Track.sLap,sliding_energy_long2/1e3,'--','LineWidth',2)
 title('Sliding Energy Longitudinal FR','Interpreter','latex')
 ylabel('Energy [kJ]','Interpreter','latex')
 xlabel('Distance [m]','Interpreter','latex')
@@ -261,7 +261,7 @@ grid minor
 set(gca,'FontSize',13)
 %%
 subplot(2,2,3)
-plot(Track.sLap,sliding_energy_long3/1e3,'--','Color',[0.3 0.3 1],'LineWidth',2)
+plot(Track.sLap,sliding_energy_long3/1e3,'--','LineWidth',2)
 title('Sliding Energy Longitudinal RL','Interpreter','latex')
 ylabel('Energy [kJ]','Interpreter','latex')
 xlabel('Distance [m]','Interpreter','latex')
@@ -269,7 +269,7 @@ grid minor
 set(gca,'FontSize',13)
 %%
 subplot(2,2,4)
-plot(Track.sLap,sliding_energy_long4/1e3,'--','Color',[1 1 0.0],'LineWidth',2)
+plot(Track.sLap,sliding_energy_long4/1e3,'--','LineWidth',2)
 title('Sliding Energy Longitudinal RR','Interpreter','latex')
 ylabel('Energy [kJ]','Interpreter','latex')
 xlabel('Distance [m]','Interpreter','latex')
@@ -280,7 +280,7 @@ set(gca,'FontSize',13)
 
 figure;plotbrowser;
 subplot(2,2,1)
-plot(Track.sLap,sliding_power_lat1/1e3,'--','Color',[1 0 0],'LineWidth',2)
+plot(Track.sLap,sliding_power_lat1/1e3,'--','LineWidth',2)
 title('Sliding power Lateral FL','Interpreter','latex')
 ylabel('power [kW]','Interpreter','latex')
 xlabel('Distance [m]','Interpreter','latex')
@@ -288,7 +288,7 @@ grid minor
 set(gca,'FontSize',13)
 %%
 subplot(2,2,2)
-plot(Track.sLap,sliding_power_lat2/1e3,'--','Color',[0 1 0],'LineWidth',2)
+plot(Track.sLap,sliding_power_lat2/1e3,'--','LineWidth',2)
 title('Sliding power Lateral FR','Interpreter','latex')
 ylabel('power [kW]','Interpreter','latex')
 xlabel('Distance [m]','Interpreter','latex')
@@ -296,7 +296,7 @@ grid minor
 set(gca,'FontSize',13)
 %%
 subplot(2,2,3)
-plot(Track.sLap,sliding_power_lat3/1e3,'--','Color',[0.3 0.3 1],'LineWidth',2)
+plot(Track.sLap,sliding_power_lat3/1e3,'--','LineWidth',2)
 title('Sliding power Lateral RL','Interpreter','latex')
 ylabel('power [kW]','Interpreter','latex')
 xlabel('Distance [m]','Interpreter','latex')
@@ -304,7 +304,7 @@ grid minor
 set(gca,'FontSize',13)
 %%
 subplot(2,2,4)
-plot(Track.sLap,sliding_power_lat4/1e3,'--','Color',[1 1 0.0],'LineWidth',2)
+plot(Track.sLap,sliding_power_lat4/1e3,'--','LineWidth',2)
 title('Sliding power Lateral RR','Interpreter','latex')
 ylabel('power [kW]','Interpreter','latex')
 xlabel('Distance [m]','Interpreter','latex')
@@ -315,7 +315,7 @@ set(gca,'FontSize',13)
 
 figure;plotbrowser;
 subplot(2,2,1)
-plot(Track.sLap,sliding_power_long1/1e3,'--','Color',[1 0 0],'LineWidth',2)
+plot(Track.sLap,sliding_power_long1/1e3,'--','LineWidth',2)
 title('Sliding power Longitudinal FL','Interpreter','latex')
 ylabel('power [kW]','Interpreter','latex')
 xlabel('Distance [m]','Interpreter','latex')
@@ -323,7 +323,7 @@ grid minor
 set(gca,'FontSize',13)
 %%
 subplot(2,2,2)
-plot(Track.sLap,sliding_power_long2/1e3,'--','Color',[0 1 0],'LineWidth',2)
+plot(Track.sLap,sliding_power_long2/1e3,'--','LineWidth',2)
 title('Sliding power Longitudinal FR','Interpreter','latex')
 ylabel('power [kW]','Interpreter','latex')
 xlabel('Distance [m]','Interpreter','latex')
@@ -331,7 +331,7 @@ grid minor
 set(gca,'FontSize',13)
 %%
 subplot(2,2,3)
-plot(Track.sLap,sliding_power_long3/1e3,'--','Color',[0.3 0.3 1],'LineWidth',2)
+plot(Track.sLap,sliding_power_long3/1e3,'--','LineWidth',2)
 title('Sliding power Longitudinal RL','Interpreter','latex')
 ylabel('power [kW]','Interpreter','latex')
 xlabel('Distance [m]','Interpreter','latex')
@@ -339,7 +339,7 @@ grid minor
 set(gca,'FontSize',13)
 %%
 subplot(2,2,4)
-plot(Track.sLap,sliding_power_long4/1e3,'--','Color',[1 1 0.0],'LineWidth',2)
+plot(Track.sLap,sliding_power_long4/1e3,'--','LineWidth',2)
 title('Sliding power Longitudinal RR','Interpreter','latex')
 ylabel('power [kW]','Interpreter','latex')
 xlabel('Distance [m]','Interpreter','latex')
@@ -387,7 +387,7 @@ title('Tire Normal Load - FL','Interpreter','latex')
 ylabel('Force [N]','Interpreter','latex')
 xlabel('Distance [m]','Interpreter','latex')
 % ylim([0*min(Fz1) max(Fz2)])
-ylim([0*min(Fz1) 8e3])
+% ylim([0*min(Fz1) 8e3])
 grid minor
 set(gca,'FontSize',13)
 subplot(2,2,2)
@@ -395,7 +395,7 @@ plot(Track.sLap,Fz2,'Color',[0.2 0.8 0],'LineWidth',2)
 title('Tire Normal Load - FR','Interpreter','latex')
 ylabel('Force [N]','Interpreter','latex')
 xlabel('Distance [m]','Interpreter','latex')
-ylim([0*min(Fz1) 8e3])
+% ylim([0*min(Fz1) 8e3])
 grid minor
 set(gca,'FontSize',13)
 subplot(2,2,3)
@@ -403,7 +403,7 @@ plot(Track.sLap,Fz3,'Color',[0.3 0.3 1],'LineWidth',2)
 title('Tire Normal Load - RL','Interpreter','latex')
 ylabel('Force [N]','Interpreter','latex')
 xlabel('Distance [m]','Interpreter','latex')
-ylim([0*min(Fz1) 8e3])
+% ylim([0*min(Fz1) 8e3])
 grid minor
 set(gca,'FontSize',13)
 subplot(2,2,4)
@@ -411,7 +411,7 @@ plot(Track.sLap,Fz4,'Color',[1 0.8 0.0],'LineWidth',2)
 title('Tire Normal Load - RR','Interpreter','latex')
 ylabel('Force [N]','Interpreter','latex')
 xlabel('Distance [m]','Interpreter','latex')
-ylim([0*min(Fz1) 8e3])
+% ylim([0*min(Fz1) 8e3])
 grid minor
 set(gca,'FontSize',13)
 
