@@ -3,7 +3,7 @@ clear;
 clc;
 
 %% Defines the folder name where the simulations results will be stored.
-folder_name = 'PORTIMAO_LMP2_OS_1000_BASELINE_test';
+folder_name = 'PORTIMAO_LMP2_OS_500_BASELINE_CORR_DIST';
 
 % Folder path where the simulation results will be stored
 results_folder = [pwd '\' 'SimResults'];
@@ -16,7 +16,8 @@ base_folder_adress = [results_folder '\' folder_name];
 
 %% Loads the speadsheet that contains vehicle parameters input
 % Path of where the spreadsheet is. DO NOT CHANGE 
-inputFolder = 'D:\dev\LaptimeSimOCP\+Model';
+% inputFolder = 'D:\dev\LaptimeSimOCP\+Model';
+inputFolder = [pwd '\+Model'];
 
 % Name of the spredsheet file. Change based on what is the vehicle parameters you want to load 
 setup_name4wm = [inputFolder '\LMP2_OS.xlsx'];
@@ -40,7 +41,7 @@ for ii = 1:number_of_sims
     %         if the simulation will optimize vehicle parameters
     %         if the simulation contains fuel saving constraints
     %         if the simulation contains tire energy saving constraints
-    problem = Initialize.fnInitMethod('trapezoid',1000,false,false,false);
+    problem = Initialize.fnInitMethod('trapezoid',500,false,false,false);
 
     problem = Initialize.fnInitVehicleSheet(problem,ii,setup_name4wm);
 
