@@ -3,7 +3,7 @@ clear;
 clc;
 
 %% Defines the folder name where the simulations results will be stored.
-folder_name = 'FRANCE_LMP2_OPTIMIZED_450';
+folder_name = 'BAHEREIN_LMP2_BASELINE';
 
 % Folder path where the simulation results will be stored
 results_folder = [pwd '\' 'SimResults'];
@@ -16,7 +16,7 @@ base_folder_adress = [results_folder '\' folder_name];
 
 %% Loads the speadsheet that contains vehicle parameters input
 % Path of where the spreadsheet is. DO NOT CHANGE 
-inputFolder = 'D:\dev\LaptimeSimOCP\+Model';
+inputFolder = [pwd '\' '+Model'];
 
 % Name of the spredsheet file. Change based on what is the vehicle parameters you want to load 
 setup_name4wm = [inputFolder '\LMP2_OS.xlsx'];
@@ -54,7 +54,7 @@ for ii = 1:number_of_sims
     %% Get initial estimate
     % You need an initial guess for solving the BVP
     
-    problem = PreProcessing.fnGetInitialEstimate(problem, 'Load');
+    problem = PreProcessing.fnGetInitialEstimate(problem, 'PreSim');
     
     %% Set solver options and solve the Minimum Time Maneuvre 
     
