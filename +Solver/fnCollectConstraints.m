@@ -11,17 +11,17 @@ ceq_vehicle = reshape(q,numel(q),1);
 % finalSpeed = x(3,end);
 
 % constraints so that the beggning and the end of the lap is the same
-ceq_initial  = [x(1,1) x(2,1) u(3,1) u(4,1)];
+ceq_initial  = [x(1,1) x(2,1) x(end-1,1) x(end,1) u(1,1) u(2,1) u(3,1) u(4,1)];
 % ceq_initial  = [x(1,1) x(2,1) ];
 % ceq_initial  = [];
-ceq_terminal = [x(1,end) x(2,end) u(3,end) u(4,end)];
+ceq_terminal = [x(1,end) x(2,end) x(end-1,end) x(end,end) u(1,end) u(2,end) u(3,end) u(4,end)];
 % ceq_terminal = [x(1,end) x(2,end) ];
 % ceq_terminal = [];
 
 % inequality constraints on having always positve cornering stiffness and
 % slip stiffness 
-% c = reshape(g,numel(g),1);
-c = [];
+c = reshape(g,numel(g),1);
+% c = [];
 
 if saving_constraints_bound.fuel ~= -1
     c = [c; saving_constraints.fuel-saving_constraints_bound.fuel];
@@ -48,6 +48,7 @@ c_if = [abs(x(3,1)-x(3,end))-1,... % long vel
 
 % c_if = abs(x(3,1)-x(3,end))-1;
 % c_if = [];
+
 c = [c; c_if ];
 
 ceq = [ceq_dynamics' ceq_vehicle' ceq_initial-ceq_terminal];

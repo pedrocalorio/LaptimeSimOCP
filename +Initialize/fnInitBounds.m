@@ -27,8 +27,8 @@ problem.bounds.finalState.low   = [-TrackWidth/2+VehicleTrack/2 -pi/4 0/3.6 -0.5
 problem.bounds.finalState.upp   = [ TrackWidth/2-VehicleTrack/2  pi/4 Vx0    0.5  1e-5 Vx0/rl_f Vx0/rl_f Vx0/rl_r Vx0/rl_r 1e-5 1]';
 
 % Upper and lower bound on the control inputs
-problem.bounds.control.low = [-pi/4 -3 -inf -inf]';
-problem.bounds.control.upp = [ pi/4  3  inf  inf]';
+problem.bounds.control.low = [-pi/4 -4 -inf -inf]';
+problem.bounds.control.upp = [ pi/4  4  inf  inf]';
 
 problem.bounds.initialControl.low = [-0.001 -0.1 -inf -inf]';
 problem.bounds.initialControl.upp = [ 0.001  0.1  inf  inf]';
@@ -63,7 +63,7 @@ end
 %% defines the value of the maximum total tire energy dissipated in a lap admissible 
 
 if problem.options.tireEnergySavingFlag == true
-    problem.bounds.tire_energy = 6.0095e04*0.70;
+    problem.bounds.tire_energy = 6.4227e+04*0.70;
 else
     problem.bounds.tire_energy = -1;
 end

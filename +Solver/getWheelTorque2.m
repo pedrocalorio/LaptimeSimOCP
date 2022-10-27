@@ -1,4 +1,5 @@
-function [Torque_FL,Torque_FR,Torque_RL,Torque_RR,fTauPos,fTauNeg]  = getWheelTorque2(tau,Vehicle,x,p)
+function [Torque_FL,Torque_FR,Torque_RL,Torque_RR,fTauPos,fTauNeg,...
+    omega_e,Te]  = getWheelTorque2(tau,Vehicle,x,p)
 
     omega3 = x(6,:);
     omega4 = x(7,:);
