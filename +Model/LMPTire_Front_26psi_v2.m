@@ -20,10 +20,10 @@ function [mfCoeff] = LMPTire_Front_26psi_v2(~)
     MF.limits.gamma = [-0.2610 0.2610];
 
     % dimensionless scaling coefficients to modify global tyre behaviour
-    MF.scaling.lmux = 0.9;   % longitudinal friction scaling
-    MF.scaling.lKx  = 0.9;   % longitudinal slip stiffness scaling
-    MF.scaling.lmuy = 0.95;   % lateral friction scaling
-    MF.scaling.lKy  = 0.95;   % cornering stiffness scaling
+    MF.scaling.lmux = 0.8;   % longitudinal friction scaling
+    MF.scaling.lKx  = 0.8;   % longitudinal slip stiffness scaling
+    MF.scaling.lmuy = 0.8;   % lateral friction scaling
+    MF.scaling.lKy  = 0.8;   % cornering stiffness scaling
     MF.scaling.lgay = 1;   % scaling of camber influence on lateral force
     MF.scaling.ltr  = 1;   % scaling of pneumatic trail
     MF.scaling.lres = 1;   % scaling of residual moment 

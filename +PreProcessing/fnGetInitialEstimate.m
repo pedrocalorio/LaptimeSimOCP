@@ -4,7 +4,7 @@ switch sMethod
     case 'Load'
         %
 
-        customGuess = load([cd, '\SimResults\PORTIMAO_LMP2_OS_500_BASELINE\sim.mat']);
+        customGuess = load([cd, '\SimResults\Bahrein\sim.mat']);
 
         sLap = customGuess.soln.grid.sLap;
 

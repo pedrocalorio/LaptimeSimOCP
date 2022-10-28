@@ -3,11 +3,9 @@ clear;
 clc;
 
 %% Defines the folder name where the simulations results will be stored.
-<<<<<<< HEAD
-folder_name = 'BAHEREIN_LMP2_BASELINE';
-=======
-folder_name = 'PORTIMAO_LMP2_OS_500_BASELINE_CORR_DIST';
->>>>>>> 48265c3f592372cbe8c28e3670624e5fafbb95c5
+
+folder_name = 'Bahrein_v2';
+
 
 % Folder path where the simulation results will be stored
 results_folder = [pwd '\' 'SimResults'];
@@ -20,12 +18,8 @@ base_folder_adress = [results_folder '\' folder_name];
 
 %% Loads the speadsheet that contains vehicle parameters input
 % Path of where the spreadsheet is. DO NOT CHANGE 
-<<<<<<< HEAD
-inputFolder = [pwd '\' '+Model'];
-=======
-% inputFolder = 'D:\dev\LaptimeSimOCP\+Model';
+
 inputFolder = [pwd '\+Model'];
->>>>>>> 48265c3f592372cbe8c28e3670624e5fafbb95c5
 
 % Name of the spredsheet file. Change based on what is the vehicle parameters you want to load 
 setup_name4wm = [inputFolder '\LMP2_OS.xlsx'];
@@ -49,7 +43,7 @@ for ii = 1:number_of_sims
     %         if the simulation will optimize vehicle parameters
     %         if the simulation contains fuel saving constraints
     %         if the simulation contains tire energy saving constraints
-    problem = Initialize.fnInitMethod('trapezoid',500,false,false,false);
+    problem = Initialize.fnInitMethod('hermiteSimpson',600,false,false,false);
 
     problem = Initialize.fnInitVehicleSheet(problem,ii,setup_name4wm);
 
@@ -63,15 +57,15 @@ for ii = 1:number_of_sims
     %% Get initial estimate
     % You need an initial guess for solving the BVP
     
-    problem = PreProcessing.fnGetInitialEstimate(problem, 'PreSim');
+    problem = PreProcessing.fnGetInitialEstimate(problem, 'Load');
     
     %% Set solver options and solve the Minimum Time Maneuvre 
     
     options = optimoptions('fmincon', 'Display', 'iter-detailed', ...
             'useparallel', true, ...
-            'StepTolerance', 1e-5, ...
+            'StepTolerance', 1e-6, ...
             'ConstraintTolerance', 1e-5, ...
-            'OptimalityTolerance', 1e-5, ...
+            'OptimalityTolerance', 1e-6, ...
             'SpecifyConstraintGradient', false, ...
             'SpecifyObjectiveGradient', false, ...
             'MaxIterations', 1e4, ...

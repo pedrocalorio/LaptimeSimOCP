@@ -10,8 +10,10 @@ vx      = x(3,:); % velocity
 vy      = x(4,:); % body-slip angle
 % r       = x(5,:); %yaw rate
 
+kappa = interp1(Track.distance,Track.curv,Track.sLap,'spline');
+
 % conversion from time to distance
-Sf = (1 - n.*Track.curv)./(vx.*cos(zeta)-vy.*sin(zeta));
+Sf = (1 - n.*kappa)./(vx.*cos(zeta)-vy.*sin(zeta));
 
 f = Sf;
 

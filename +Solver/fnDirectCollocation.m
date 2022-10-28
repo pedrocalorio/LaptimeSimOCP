@@ -27,6 +27,8 @@ end
 
 xLow = [B.initialState.low, B.state.low*ones(1,nGrid-2), B.finalState.low];
 uLow = [B.initialControl.low, B.control.low*ones(1,nGrid-2), B.finalControl.low];
+% Special condition for when the track is generated with GPS
+xLow(1,:) = interp1(Track.distance,Track.left_offset,Track.sLap) + Vehicle.chassis.frontTrack;
 % Joins the state and control variables into one
 zLow = Utilities.packDecVar_mex(xLow,uLow);
 
@@ -36,6 +38,8 @@ end
 
 xUpp = [B.initialState.upp, B.state.upp*ones(1,nGrid-2), B.finalState.upp];
 uUpp = [B.initialControl.upp, B.control.upp*ones(1,nGrid-2), B.finalControl.upp];
+% Special condition for when the track is generated with GPS
+xUpp(1,:) = interp1(Track.distance,Track.right_offset,Track.sLap) - Vehicle.chassis.frontTrack;
 % Joins the state and control variables into one
 zUpp = Utilities.packDecVar_mex(xUpp,uUpp);
 
@@ -136,6 +140,8 @@ function [c, ceq] = myConstraint(z,pack,defectCst,Track,Vehicle,nDesign,savingCo
 
 sLap = Track.sLap;
 
+kappa = interp1(Track.distance,Track.curv,Track.sLap,'spline');
+
 [x,u] = Utilities.unPackDecVar_mex(z(1:end-nDesign),pack);
 
 % Calculate defects along the path
@@ -168,7 +174,7 @@ end
 
 % Calculates the conversion factor for the transformation, which is the
 % inverse speed along the center line
-Sf = (1 - x(1,:).*Track.curv)./(x(3,:).*cos(x(2,:))-x(4,:).*sin(x(2,:)));
+Sf = (1 - x(1,:).*kappa)./(x(3,:).*cos(x(2,:))-x(4,:).*sin(x(2,:)));
 
 % Transform vehicle state into space/distance dependent 
 dx_vehicle = Sf.*dx_vehicle;

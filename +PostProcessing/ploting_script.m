@@ -1,7 +1,7 @@
 %% Setting output variables
 
-ax = O(1,:);
 ay = O(2,:);
+ax = O(45,:);
 
 Throttle = O(7,:);
 Brakes   = O(8,:);
@@ -59,10 +59,13 @@ stbi = O(41,:);
 % xModel = Track.xCar - x_star(1,:).*sin(Track.aYaw);
 % yModel = Track.yCar + x_star(1,:).*cos(Track.aYaw);
 
-thetaModel = Track.aYaw + x_star(2,:);
+thetaModel = interp1(Track.distance,Track.aYaw,Track.sLap) + x_star(2,:);
 
-xModel = Track.xCar - x_star(1,:).*sin(thetaModel);
-yModel = Track.yCar + x_star(1,:).*cos(thetaModel);
+xModel = interp1(Track.distance,Track.xCar,Track.sLap) - x_star(1,:).*sin(thetaModel);
+yModel = interp1(Track.distance,Track.yCar,Track.sLap) + x_star(1,:).*cos(thetaModel);
+
+% xModel = Track.xCar - x_star(1,:);
+% yModel = Track.yCar + x_star(1,:);
 
 
 %% ploting trajectory
