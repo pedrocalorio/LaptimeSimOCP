@@ -53,6 +53,7 @@ tangvecs = [ path_temp(1+steps_tot_psi:end, 1)' - path_temp(1:length(x_temp)-ste
 
 % # calculate psi of tangent vectors (pi/2 must be substracted due to our convention that psi = 0 is north)
 psi = atan2(tangvecs(:, 2), tangvecs(:, 1)) - pi/ 2 ;
+psi = psi - psi(1);
 psi = +PreProcessing.normalize_psi(psi);
 
 %% starts calculation of curvature
@@ -75,6 +76,7 @@ s_points_temp = [s_points; s_points_cl_reverse(end-ind_step_review_curv,1) ];
 s_points_temp(end) = s_points_cl(end) + s_points(1:ind_step_preview_curv) ;
 
 kappa = delta_psi ./ (s_points_temp(steps_tot_curv+1:end) - s_points_temp(1:length(s_points_temp)-steps_tot_psi,1));
+kappa = smooth(cumulativeLen,kappa,16,'lowess');
 
 % normal direction for each vertex
 dx = gradient(xt);
@@ -89,7 +91,7 @@ xoff = @(a) -a*dy./dL + xt;
 yoff = @(a)  a*dx./dL + yt;
 
 % offset data
-offset = [-twrt twlt];
+offset = [-twlt twrt];
 for i = 1:numel(xt)
     xin = xoff(offset(i,1));      % get inner offset curve
     yin = yoff(offset(i,1));
@@ -107,28 +109,33 @@ end
 
 
 Track = struct();
-Track.sLap = cumulativeLen;
+Track.distance = cumulativeLen;
+Track.sLap = linspace(0,cumulativeLen(end),nGrid);
 Track.aYaw = unwrap_signal(psi);
 Track.curv = kappa;
-Track.d_sLap = [diff(Track.sLap); Track.sLap(end) - Track.sLap(end-1)];
+Track.d_sLap = [diff(Track.sLap), Track.sLap(end) - Track.sLap(end-1)];
 Track.xCar = xt;
 Track.yCar = yt;
-Track.TrackWidth = mean(twr+twl);
+Track.TrackWidth = 1.00*mean(twr+twl);
 Track.xCarLeft = xin;
 Track.yCarLeft = yin;
 Track.xCarRight = xout;
 Track.yCarRight = yout;
+Track.left_offset = offset(:,1);
+Track.right_offset = offset(:,2);
 
-Track.sLap = linspace(0,cumulativeLen(end),nGrid);
-Track.aYaw = interp1(cumulativeLen,Track.aYaw,Track.sLap,'pchip');
-Track.curv = interp1(cumulativeLen,Track.curv,Track.sLap,'pchip');
-Track.d_sLap = interp1(cumulativeLen,Track.d_sLap,Track.sLap,'pchip');
-Track.xCar = interp1(cumulativeLen,xt,Track.sLap,'pchip');
-Track.yCar = interp1(cumulativeLen,yt,Track.sLap,'pchip');
-Track.xCarLeft  = interp1(cumulativeLen,xin,Track.sLap,'pchip');
-Track.yCarLeft  = interp1(cumulativeLen,yin,Track.sLap,'pchip');
-Track.xCarRight = interp1(cumulativeLen,xout,Track.sLap,'pchip');
-Track.yCarRight = interp1(cumulativeLen,yout,Track.sLap,'pchip');
+
+% Track.aYaw = interp1(cumulativeLen,Track.aYaw,Track.sLap,'spline');
+% Track.curv = interp1(cumulativeLen,Track.curv,Track.sLap,'spline');
+% Track.d_sLap = interp1(cumulativeLen,Track.d_sLap,Track.sLap,'spline');
+% Track.xCar = interp1(cumulativeLen,xt,Track.sLap,'spline');
+% Track.yCar = interp1(cumulativeLen,yt,Track.sLap,'spline');
+% Track.xCarLeft  = interp1(cumulativeLen,xin,Track.sLap,'spline');
+% Track.yCarLeft  = interp1(cumulativeLen,yin,Track.sLap,'spline');
+% Track.xCarRight = interp1(cumulativeLen,xout,Track.sLap,'spline');
+% Track.yCarRight = interp1(cumulativeLen,yout,Track.sLap,'spline');
+% Track.left_offset = interp1(cumulativeLen,offset(:,1),Track.sLap,'spline');
+% Track.right_offset = interp1(cumulativeLen,offset(:,2),Track.sLap,'spline');
 
 % % plot starting line
 % plot([xin(1) xout(1)], [yin(1) yout(1)],'color','b','linew',2)

@@ -13,7 +13,7 @@ fz_range = linspace(1e3,10e3,100);
 
 kappa_range = linspace(-0.9,0.9,100);
 
-Fz = 5e3;
+Fz = 6e3;
 gamma = 0;
 
 MF_f = problem.dsSystem.vd.tire_1.MF;

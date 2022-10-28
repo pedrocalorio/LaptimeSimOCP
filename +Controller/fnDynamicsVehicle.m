@@ -2,6 +2,8 @@ function [dx,g_ineq,q_eq,O,saving_constraints] = fnDynamicsVehicle(~,x,u,Vehicle
 
     % This function returns the dynamics of the car IN TIME
     dx = zeros(9,length(x(1,:)));
+
+    kappa = interp1(Track.distance,Track.curv,Track.sLap,'spline');
     
     % Gravity constant
     g = 9.81;
@@ -26,7 +28,7 @@ function [dx,g_ineq,q_eq,O,saving_constraints] = fnDynamicsVehicle(~,x,u,Vehicle
     LatLT_norm  = u(4,:);             
 
     % Sf
-    Sf = (1 - n.*Track.curv)./(vx.*cos(xi)-vy.*sin(xi));
+    Sf = (1 - n.*kappa)./(vx.*cos(xi)-vy.*sin(xi));
     cumLaptime = cumtrapz(Track.sLap,Sf);
     
     %% Design parameters of the car
@@ -337,15 +339,16 @@ function [dx,g_ineq,q_eq,O,saving_constraints] = fnDynamicsVehicle(~,x,u,Vehicle
     
     
     O = zeros(53,length(x(1,:))); 
-    O(1,:) = Fx/m;
-    O(2,:) = Fy/m;
+    O(1,:) = cumLaptime;
+    O(2,:) = (Fy./m) ;
     O(3,:) = deltaFzf_lat;
     O(4,:) = deltaFzr_lat;
     O(5,:) = deltaFzf_long;
     O(6,:) = deltaFzr_long;
     O(7,:) = throttle;
     O(8,:) = brakes;
-    O(9,:) = sqrt( vx.^2 + vy.^2 );
+%     O(9,:) = sqrt( vx.^2 + vy.^2 );
+    O(9,:) = vx;
     O(10,:) = sliding_energy_lateral_1;
     O(11,:) = sliding_energy_lateral_2;
     O(12,:) = sliding_energy_lateral_3;
@@ -380,7 +383,7 @@ function [dx,g_ineq,q_eq,O,saving_constraints] = fnDynamicsVehicle(~,x,u,Vehicle
     O(41,:) = stbi;
     O(42:43,:) = eigenvalues;
     O(44,:) = mass_flow;
-    O(45,:) = cumLaptime;
+    O(45,:) = Fx/m;
     O(46,:) = sliding_power_lateral_1;
     O(47,:) = sliding_power_lateral_2;
     O(48,:) = sliding_power_lateral_3;
@@ -389,6 +392,7 @@ function [dx,g_ineq,q_eq,O,saving_constraints] = fnDynamicsVehicle(~,x,u,Vehicle
     O(51,:) = sliding_power_longitudinal_2;
     O(52,:) = sliding_power_longitudinal_3;
     O(53,:) = sliding_power_longitudinal_4;
+    O(54,:) = rad2deg(x(8,:));
 
     %% saving constraints
     saving_constraints.fuel = fuel_usage;

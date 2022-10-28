@@ -7,21 +7,16 @@ ceq_dynamics = reshape(defects,numel(defects),1);
 % collect the equality constraints on wheel load distribution
 ceq_vehicle = reshape(q,numel(q),1);
 
-% initSpeed = x(3,1);
-% finalSpeed = x(3,end);
-
 % constraints so that the beggning and the end of the lap is the same
 ceq_initial  = [x(1,1) x(2,1) u(3,1) u(4,1)];
-% ceq_initial  = [x(1,1) x(2,1) ];
-% ceq_initial  = [];
+
 ceq_terminal = [x(1,end) x(2,end) u(3,end) u(4,end)];
-% ceq_terminal = [x(1,end) x(2,end) ];
-% ceq_terminal = [];
+
 
 % inequality constraints on having always positve cornering stiffness and
 % slip stiffness 
-% c = reshape(g,numel(g),1);
-c = [];
+c = reshape(g,numel(g),1);
+% c = [];
 
 if saving_constraints_bound.fuel ~= -1
     c = [c; saving_constraints.fuel-saving_constraints_bound.fuel];

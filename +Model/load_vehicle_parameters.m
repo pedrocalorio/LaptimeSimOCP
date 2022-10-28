@@ -54,10 +54,10 @@ vehicle.tire_4.radius = 0.330;
 % vehicle.tire_3.MF = mfeval.readTIR('637326_ISO_REAR.TIR');
 % vehicle.tire_4.MF = mfeval.readTIR('637326_ISO_REAR.TIR');
 
-vehicle.tire_1.MF = LMPTire_Front_26psi_v2();
-vehicle.tire_2.MF = LMPTire_Front_26psi_v2();
-vehicle.tire_3.MF = LMPTire_Rear_26psi_v2();
-vehicle.tire_4.MF = LMPTire_Rear_26psi_v2();
+vehicle.tire_1.MF = Model.LMPTire_Front_26psi_v2();
+vehicle.tire_2.MF = Model.LMPTire_Front_26psi_v2();
+vehicle.tire_3.MF = Model.LMPTire_Rear_26psi_v2();
+vehicle.tire_4.MF = Model.LMPTire_Rear_26psi_v2();
 
 % Diff
 
@@ -66,7 +66,7 @@ vehicle.differential.G = 1.8;
 
 % Engine properties
 
-EnginePowerMap = readtable("D:\dev\DynamicLaptimeSim\v2\4WM_PLANAR_7DOF\+Model\LMP2 Engine Power Map.xlsx");
+EnginePowerMap = readtable("D:\dev\LaptimeSimOCP\+Model\LMP2 Engine Power Map.xlsx");
 
 % going from hp to watts the multiplicy constant is 745.7
 vehicle.engine.maximum_power = 550*745.7;

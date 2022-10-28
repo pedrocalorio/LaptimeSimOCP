@@ -78,15 +78,15 @@ else
     end
 
     % reads the telemetry data used to re-construct the centerline
-    data = readmatrix("+TelemetryData\PaulRicard.csv");
+%     data = readmatrix("+TelemetryData\PaulRicard.csv");
     
    
     % define the track width
-    track_width = 10; %m
+%     track_width = 10; %m
     
     % calls the function that generates the track
 %     Track = PreProcessing.generate_track_from_telemetry(data,nGrid,track_width);
-    Track = PreProcessing.load_track_from_GPS("+TrackGPSData/Sakhir.csv",nGrid);
+    Track = PreProcessing.load_track_from_GPS("+TrackGPSData/Copy_of_Sakhir.csv",nGrid);
 
     
     problem.dsSystem.td = Track;
@@ -107,10 +107,55 @@ clf(f1);
 
 f1.Name = 'Track Definition';
 
+% figure;plotbrowser;
+% plot(td.sLap, td.curv);
+% hold on;
+% plot(td.sLap, td.curv, 'LineWidth', 2);
+% grid minor
+% % plot(td.sLap, td.curv, 'ob');
+% title('Track Curvature');
+% xlabel('Center-Line Distance [m]'); ylabel('Curvature [1/m]');
+% set(gca,'FontSize',15)
+% 
+% 
+% figure;plotbrowser;
+% plot(td.sLap, td.aYaw);
+% title('Vehicle yaw angle');
+% xlabel('Center-Line Distance [m]'); ylabel('\theta [deg]');
+% set(gca,'FontSize',15)
+% 
+% figure;plotbrowser;
+% plot(td.sLap, td.xCar, 'b');
+% hold on;
+% plot(td.sLap, td.yCar, 'r');
+% title('X and Y-Coordinate against Center-Line Distance');
+% legend('X', 'Y');
+% xlabel('Center-Line Distance [m]'); ylabel('X and Y-Coordinate');
+% set(gca,'FontSize',15)
+% 
+% figure;plotbrowser;
+% plot(td.xCar, td.yCar, 'black--',td.xCarLeft, td.yCarLeft,'black',td.xCarRight, td.yCarRight,'black' );
+% hold on
+% plot(0,0,'>','LineWidth',3)
+% % xlim([min(Track.xCar)-50 max(Track.xCar)+50])
+% % title('Circuit de Barcelona-Catalunya','Interpreter','latex');
+% xlabel('X-Coordinate [m]','Interpreter','latex'); ylabel('Y-Coordinate [m]','Interpreter','latex');
+% daspect([1.5 1.15 10])
+% set(gca,'FontSize',15)
+% legend('Center-Line','Left Bound','Right Bound','Starting','Interpreter','latex','location','best')
+% % subplot(2,2,4)
+% % plot(td.xCar, td.yCar);
+% % title('Car position');
+% % xlabel('xCar'); ylabel('yCar');
+
+% axis equal
+
+%%
+
 figure;plotbrowser;
-plot(td.sLap, td.curv);
+plot(td.distance, td.curv);
 hold on;
-plot(td.sLap, td.curv, 'LineWidth', 2);
+plot(td.distance, td.curv, 'LineWidth', 2);
 grid minor
 % plot(td.sLap, td.curv, 'ob');
 title('Track Curvature');
@@ -119,15 +164,15 @@ set(gca,'FontSize',15)
 
 
 figure;plotbrowser;
-plot(td.sLap, td.aYaw);
+plot(td.distance, td.aYaw);
 title('Vehicle yaw angle');
 xlabel('Center-Line Distance [m]'); ylabel('\theta [deg]');
 set(gca,'FontSize',15)
 
 figure;plotbrowser;
-plot(td.sLap, td.xCar, 'b');
+plot(td.distance, td.xCar, 'b');
 hold on;
-plot(td.sLap, td.yCar, 'r');
+plot(td.distance, td.yCar, 'r');
 title('X and Y-Coordinate against Center-Line Distance');
 legend('X', 'Y');
 xlabel('Center-Line Distance [m]'); ylabel('X and Y-Coordinate');

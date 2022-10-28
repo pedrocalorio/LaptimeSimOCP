@@ -1,7 +1,9 @@
 %% Setting output variables
 
-ax = O(1,:);
+ax = O(45,:);
 ay = O(2,:);
+
+time = O(1,:);
 
 Throttle = O(7,:);
 Brakes   = O(8,:);
@@ -56,18 +58,41 @@ stbi = O(41,:);
 % eigenvalues = O(42:43,:);
 
 
-% xModel = Track.xCar - x_star(1,:).*sin(Track.aYaw);
-% yModel = Track.yCar + x_star(1,:).*cos(Track.aYaw);
+thetaModel = interp1(Track.distance,Track.aYaw,Track.sLap) + x_star(2,:);
 
-thetaModel = Track.aYaw + x_star(2,:);
+xModel = interp1(Track.distance,Track.xCar,Track.sLap) - x_star(1,:).*sin(thetaModel);
+yModel = interp1(Track.distance,Track.yCar,Track.sLap) + x_star(1,:).*cos(thetaModel);
 
-xModel = Track.xCar - x_star(1,:).*sin(thetaModel);
-yModel = Track.yCar + x_star(1,:).*cos(thetaModel);
+% xModel = interp1(Track.distance,Track.xCar,Track.sLap) + x_star(1,:);
+% yModel = interp1(Track.distance,Track.yCar,Track.sLap) + x_star(1,:);
 
+% calculating the trajectory from the vehicle channels
+
+Curv = ay./(Speed.^2);
+
+psi = cumtrapz(time,Curv.*Speed) - x_star(2,:);
+
+xx = cumtrapz(time,cos(psi).*Speed);
+yy = cumtrapz(time,sin(psi).*Speed);
+
+e_psi = abs(psi(end)) - 2*pi;
+
+delta_psi = -e_psi/Track.sLap(end);
+psi = cumtrapz(time,(Curv-delta_psi).*Speed);
+xx = cumtrapz(time,cos(psi).*Speed);
+yy = cumtrapz(time,sin(psi).*Speed);
+
+delta_x = (xx(1)-xx(end))/Track.sLap(end);
+delta_y = (yy(1)-yy(end))/Track.sLap(end);
+
+psi = psi;
+xx = cumtrapz(time,(cos(psi)+delta_x).*Speed);
+yy = cumtrapz(time,(sin(psi)+delta_y).*Speed);
 
 %% ploting trajectory
 
 figure; plotbrowser;
+subplot(1,2,1)
 plot(Track.xCar, Track.yCar, 'black--', Track.xCarLeft, Track.yCarLeft, 'black', Track.xCarRight, Track.yCarRight, 'black')
 % plot(Track.xCarLeft, Track.yCarLeft, 'black', Track.xCarRight, Track.yCarRight, 'black')
 title('Optimized Trajectory','Interpreter','latex')
@@ -76,7 +101,7 @@ ylabel('Y [m]','Interpreter','latex')
 grid on
 % axis equal
 xlim([min(Track.xCar)-50 max(Track.xCar)+50])
-daspect([1.5 1.15 10])
+daspect([1.3 1.15 10])
 hold on
 % surf([xModel(:) xModel(:)], [yModel(:) yModel(:)], [x(1:6:end) x(1:6:end)], ...  % Reshape and replicate data
 %      'FaceColor', 'none', ...    % Don't bother filling faces with color
@@ -86,10 +111,14 @@ hold on
 % plot(xModel(end-5:end),yModel(end-5:end))
 plot(xModel,yModel,'LineWidth',2)
 hold on
+% plot(-yy,xx)
+% plot(xx,yy)
 plot(xModel(1),yModel(1),'>','LineWidth',3)
 legend('Centerline','Left Track Limit','Right Track Limit','Optimal Trajectory','Start/Finish','Location','best','Interpreter','latex')
 grid minor
 set(gca,'FontSize',14)
+subplot(1,2,2)
+plot(Track.sLap,x_star(1,:))
 % plot(xModel,yModel)
 % view(2);   % Default 2-D view
 % colorbar;  % Add a colorbar
