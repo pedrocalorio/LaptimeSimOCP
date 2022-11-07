@@ -9,36 +9,36 @@ if MF.fittyp ~= 5
     return
 end
 
-if Fz < 0
-    Fx=0;Fy=0;Mz=0;
-    return
-end
+% if Fz < 0
+%     Fx=0;Fy=0;Mz=0;
+%     return
+% end
 
 Fz_scaling = 1;                      % Fz scaling factor
-if Fz >= MF.limits.Fz(2);            % if Fz exceeds Fzmax, use Fzmax
-    Fz = MF.limits.Fz(2);
-elseif Fz <= MF.limits.Fz(1);        % if Fz is below Fzmin, use Fzmin and scale MF results
-    Fz_scaling=Fz/MF.limits.Fz(1);
-    Fz = MF.limits.Fz(1);
-end
+% if Fz >= MF.limits.Fz(2);            % if Fz exceeds Fzmax, use Fzmax
+%     Fz = MF.limits.Fz(2);
+% elseif Fz <= MF.limits.Fz(1);        % if Fz is below Fzmin, use Fzmin and scale MF results
+%     Fz_scaling=Fz/MF.limits.Fz(1);
+%     Fz = MF.limits.Fz(1);
+% end
 
-if alpha < MF.limits.alpha(1);       % limit side slip angle input
-    alpha = MF.limits.alpha(1);
-elseif alpha > MF.limits.alpha(2);
-    alpha = MF.limits.alpha(2);
-end
+% if alpha < MF.limits.alpha(1);       % limit side slip angle input
+%     alpha = MF.limits.alpha(1);
+% elseif alpha > MF.limits.alpha(2);
+%     alpha = MF.limits.alpha(2);
+% end
+% 
+% if kappa < MF.limits.kappa(1);       % limit longitudinal slip input
+%     kappa = MF.limits.kappa(1);
+% elseif kappa > MF.limits.kappa(2);
+%     kappa = MF.limits.kappa(2);
+% end
 
-if kappa < MF.limits.kappa(1);       % limit longitudinal slip input
-    kappa = MF.limits.kappa(1);
-elseif kappa > MF.limits.kappa(2);
-    kappa = MF.limits.kappa(2);
-end
-
-if gamma < MF.limits.gamma(1);       % limit inclination angle input
-    gamma = MF.limits.gamma(1);
-elseif gamma > MF.limits.gamma(2);
-    gamma = MF.limits.gamma(2);
-end
+% if gamma < MF.limits.gamma(1);       % limit inclination angle input
+%     gamma = MF.limits.gamma(1);
+% elseif gamma > MF.limits.gamma(2);
+%     gamma = MF.limits.gamma(2);
+% end
 
 dfz=(Fz-MF.Fz0)/MF.Fz0; 
 

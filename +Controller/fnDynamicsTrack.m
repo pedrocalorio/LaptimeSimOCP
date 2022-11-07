@@ -1,17 +1,16 @@
-function dx = fnDynamicsTrack(x,states,Track)
+function dx = fnDynamicsTrack(x,Track)
+addpath('C:/dev/libraries/casadi-windows-matlabR2016a-v3.5.5')
+import casadi.*
 
 kappa = interp1(Track.distance,Track.curv,Track.sLap,'spline');
 
-n       = x(1,:); % velocity
-zeta    = x(2,:); % body-slip angle
-
-vx      = states(1,:); % velocity
-vy      = states(2,:); % body-slip angle
-r       = states(3,:); % body-slip angle
+n       = x(1,:); % n - distance perpendicular to center line
+zeta    = x(2,:); % zeta - angle relative to center line
+vx      = x(3,:); % velocity
+vy      = x(4,:); % body-slip angle
+r       = x(5,:); %yaw rate
 
 Sf = (1 - n.*kappa)./(vx.*cos(zeta)-vy.*sin(zeta));
 
-dx = zeros(2,length(n));
-
-dx(1,:) = Sf .* ( vx.*sin(zeta) + vy.*cos(zeta) );
-dx(2,:) = (Sf .* r) - kappa;
+dx = [Sf .* ( vx.*sin(zeta) + vy.*cos(zeta) );
+        (Sf .* r) - kappa];

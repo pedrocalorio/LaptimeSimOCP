@@ -1,4 +1,4 @@
-function f = fnObjective(x,u,Track)
+function f = fnObjectiveCasadi(x,u,Track)
 % 
 %  f = f(x,y) = integrand of the objective function
 %

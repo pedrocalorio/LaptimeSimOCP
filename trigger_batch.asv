@@ -69,9 +69,7 @@ for ii = 1:number_of_sims
     
     % Calls function that solves the NPL problem related to the MTM
     disp("Starting the simulation number "+ii+'.')
-    tic
     soln = Solver.MTM(problem);    
-    toc
 
 
     simResults(ii).solution = soln; 
@@ -92,13 +90,13 @@ for ii = 1:number_of_sims
     Track   = problem.dsSystem.td;
     
     
-%     [~,~,~,O,saving_constraints] = Controller.fnDynamicsVehicle(x_star,u_star,Vehicle,Track);
+    [~,~,~,O,saving_constraints] = Controller.fnDynamicsVehicle(x_star,u_star,Vehicle,Track);
+    
+    
+    KPIs = PostProcessing.metrics_output(O,problem,soln);
 %     
-%     
-%     KPIs = PostProcessing.metrics_output(O,problem,soln);
-% %     
-%     simResults(ii).outputs = O; 
-%     simResults(ii).metrics = KPIs; 
+    simResults(ii).outputs = O; 
+    simResults(ii).metrics = KPIs; 
 
 end
 

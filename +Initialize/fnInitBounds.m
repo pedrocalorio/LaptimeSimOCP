@@ -12,7 +12,7 @@ rearTrack = Vehicle.chassis.rearTrack;
 
 VehicleTrack = (frontTrack+rearTrack)/2;
 
-Vx0 = inf/3.6;
+Vx0 = 350/3.6;
 
 % Upper and lower bound on state
 problem.bounds.state.low        = [-TrackWidth/2+VehicleTrack/2 -inf   0 -inf -inf zeros(1,4) -pi -1]';
