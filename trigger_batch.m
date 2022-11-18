@@ -7,7 +7,7 @@ clc;
 
 %% Defines the folder name where the simulations results will be stored.
 
-folder_name = 'testing_casadi';
+folder_name = 'testing_casadi_v2_more_points';
 
 
 % Folder path where the simulation results will be stored
@@ -46,7 +46,7 @@ for ii = 1:number_of_sims
     %         if the simulation will optimize vehicle parameters
     %         if the simulation contains fuel saving constraints
     %         if the simulation contains tire energy saving constraints
-    problem = Initialize.fnInitMethod('trapezoid',600,false,false,false);
+    problem = Initialize.fnInitMethod('trapezoid',1500,true,false,false);
 
     problem = Initialize.fnInitVehicleSheet(problem,ii,setup_name4wm);
 
@@ -60,7 +60,7 @@ for ii = 1:number_of_sims
     %% Get initial estimate
     % You need an initial guess for solving the BVP
     
-    problem = PreProcessing.fnGetInitialEstimate(problem, 'PreSim');
+    problem = PreProcessing.fnGetInitialEstimate(problem, 'Load');
     
     %% Set solver options and solve the Minimum Time Maneuvre 
     
@@ -92,13 +92,13 @@ for ii = 1:number_of_sims
     Track   = problem.dsSystem.td;
     
     
-%     [~,~,~,O,saving_constraints] = Controller.fnDynamicsVehicle(x_star,u_star,Vehicle,Track);
+    O = PostProcessing.get_output(x_star,u_star,p_star,Vehicle,Track);
 %     
 %     
-%     KPIs = PostProcessing.metrics_output(O,problem,soln);
+    KPIs = PostProcessing.metrics_output(O,problem,soln);
 % %     
-%     simResults(ii).outputs = O; 
-%     simResults(ii).metrics = KPIs; 
+    simResults(ii).outputs = O; 
+    simResults(ii).metrics = KPIs; 
 
 end
 

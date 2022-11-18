@@ -3,17 +3,17 @@ function KPI = metrics_output(O,problem,soln)
 Track = problem.dsSystem.td;
 Vehicle = problem.dsSystem.vd;
 
-KPI.laptime = soln.info.laptime;
+KPI.laptime = soln.obj_func;
 
-n = soln.grid.state(1,:);
-zeta = soln.grid.state(2,:);
-vx = soln.grid.state(3,:);
-vy = soln.grid.state(4,:);
+n = soln.state(1,:);
+zeta = soln.state(2,:);
+vx = soln.state(3,:);
+vy = soln.state(4,:);
 % r = soln.grid.state(5,:);
 
 
 % steering integral
-KPI.steering_Integral = (trapz(abs(rad2deg(soln.grid.state(10,:))) ) );
+KPI.steering_Integral = (trapz(abs(rad2deg(soln.state(10,:))) ) );
 KPI.throttle_Integral = trapz(O(7,:));
 KPI.brakes_Integral   = trapz(O(8,:));
 

@@ -4,41 +4,41 @@ switch sMethod
     case 'Load'
         %
 
-        customGuess = load([cd, '\SimResults\Bahrein\sim.mat']);
+        customGuess = load([cd, '\SimResults\testing_casadi_v2_more_points\sim.mat']);
 
-        sLap = customGuess.soln.grid.sLap;
+        sLap = customGuess.Track.sLap;
 
         sLap_new = problem.dsSystem.td.sLap;
 
         scale = 1;
 
         if problem.options.optimalDesignFlag == 1
-            problem.guess.design = [customGuess.soln.grid.design(1);
-                    customGuess.soln.grid.design(2);
-                    customGuess.soln.grid.design(3);
-                    customGuess.soln.grid.design(4)];
+            problem.guess.design = [customGuess.soln.design(1);
+                    customGuess.soln.design(2);
+                    customGuess.soln.design(3);
+                    customGuess.soln.design(4)];
         else
             problem.guess.design = [];
         end
 
        
          
-        problem.guess.state   	= scale.* [interp1(sLap,customGuess.soln.grid.state(1,:),sLap_new);
-                                   interp1(sLap,customGuess.soln.grid.state(2,:),sLap_new);
-                                   interp1(sLap,customGuess.soln.grid.state(3,:),sLap_new);
-                                   interp1(sLap,customGuess.soln.grid.state(4,:),sLap_new);
-                                   interp1(sLap,customGuess.soln.grid.state(5,:),sLap_new);
-                                   interp1(sLap,customGuess.soln.grid.state(6,:),sLap_new);
-                                   interp1(sLap,customGuess.soln.grid.state(7,:),sLap_new);
-                                   interp1(sLap,customGuess.soln.grid.state(8,:),sLap_new);
-                                   interp1(sLap,customGuess.soln.grid.state(9,:),sLap_new);
-                                   interp1(sLap,customGuess.soln.grid.state(10,:),sLap_new);
-                                   interp1(sLap,customGuess.soln.grid.state(11,:),sLap_new)];
+        problem.guess.state   	= scale.* [interp1(sLap,customGuess.soln.state(1,:),sLap_new);
+                                   interp1(sLap,customGuess.soln.state(2,:),sLap_new);
+                                   interp1(sLap,customGuess.soln.state(3,:),sLap_new);
+                                   interp1(sLap,customGuess.soln.state(4,:),sLap_new);
+                                   interp1(sLap,customGuess.soln.state(5,:),sLap_new);
+                                   interp1(sLap,customGuess.soln.state(6,:),sLap_new);
+                                   interp1(sLap,customGuess.soln.state(7,:),sLap_new);
+                                   interp1(sLap,customGuess.soln.state(8,:),sLap_new);
+                                   interp1(sLap,customGuess.soln.state(9,:),sLap_new);
+                                   interp1(sLap,customGuess.soln.state(10,:),sLap_new);
+                                   interp1(sLap,customGuess.soln.state(11,:),sLap_new)];
                                
-        problem.guess.control   =scale.* [interp1(sLap,customGuess.soln.grid.control(1,:),sLap_new);                                   
-                                   interp1(sLap,customGuess.soln.grid.control(2,:),sLap_new);
-                                   interp1(sLap,customGuess.soln.grid.control(3,:),sLap_new);
-                                   interp1(sLap,customGuess.soln.grid.control(4,:),sLap_new)];
+        problem.guess.control   =scale.* [interp1(sLap,customGuess.soln.control(1,:),sLap_new);                                   
+                                   interp1(sLap,customGuess.soln.control(2,:),sLap_new);
+                                   interp1(sLap,customGuess.soln.control(3,:),sLap_new);
+                                   interp1(sLap,customGuess.soln.control(4,:),sLap_new)];
 
     case 'LoadData'
         customGuess = load([cd, '/#65_QU_RUN001-WS_21_04_17_BARCELONE.mat']);

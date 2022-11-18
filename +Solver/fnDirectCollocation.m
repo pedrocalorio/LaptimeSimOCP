@@ -62,7 +62,7 @@ if nDesign~=0
 %     opti.subject_to( g<=0 );
     opti.subject_to( xLow<=xk<=xUpp );
     opti.subject_to( uLow<=uk<=uUpp );
-    opti.subject_to( pLow<=uk<=pUpp );
+    opti.subject_to( pLow<=pk<=pUpp );
     opti.set_initial(xk, xGuess);
     opti.set_initial(uk, uGuess);
     opti.set_initial(pk, pGuess);
@@ -114,7 +114,7 @@ else
     soln.design = [Vehicle.chassis.frontMassDist Vehicle.aero.aeroBalance,...
         Vehicle.susp.LatLTD Vehicle.brakes.bias];
 end
-soln.obj_func = trapz(myObjective(soln.state,soln.control, F.weights, Track));
+soln.obj_func = myObjective(soln.state,soln.control, F.weights, Track);
 
 
 end
