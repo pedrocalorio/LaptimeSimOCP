@@ -4,7 +4,7 @@ switch sMethod
     case 'Load'
         %
 
-        customGuess = load([cd, '\SimResults\testing_casadi_v2_more_points\sim.mat']);
+        customGuess = load([cd, '\SimResults\budapest\sim.mat']);
 
         sLap = customGuess.Track.sLap;
 

@@ -86,7 +86,7 @@ else
     
     % calls the function that generates the track
 %     Track = PreProcessing.generate_track_from_telemetry(data,nGrid,track_width);
-    Track = PreProcessing.load_track_from_GPS("+TrackGPSData/Copy_of_Sakhir.csv",nGrid);
+    Track = PreProcessing.load_track_from_GPS("+TrackGPSData/Budapest.csv",nGrid);
 
     
     problem.dsSystem.td = Track;

@@ -32,14 +32,14 @@ xLow = [B.initialState.low, B.state.low*ones(1,nGrid-2), B.finalState.low];
 uLow = [B.initialControl.low, B.control.low*ones(1,nGrid-2), B.finalControl.low];
 pLow = B.design.low;
 % Special condition for when the track is generated with GPS
-xLow(1,:) = interp1(Track.distance,Track.left_offset,Track.sLap) + Vehicle.chassis.frontTrack;
+xLow(1,:) = interp1(Track.distance,Track.left_offset,Track.sLap) + Vehicle.chassis.frontTrack/2;
 
 
 xUpp = [B.initialState.upp, B.state.upp*ones(1,nGrid-2), B.finalState.upp];
 uUpp = [B.initialControl.upp, B.control.upp*ones(1,nGrid-2), B.finalControl.upp];
 pUpp = B.design.upp;
 % Special condition for when the track is generated with GPS
-xUpp(1,:) = interp1(Track.distance,Track.right_offset,Track.sLap) - Vehicle.chassis.frontTrack;
+xUpp(1,:) = interp1(Track.distance,Track.right_offset,Track.sLap) - Vehicle.chassis.frontTrack/2;
 
 
 %% Create the design variables of the optimization problem in CasADi MX variable 
@@ -114,7 +114,7 @@ else
     soln.design = [Vehicle.chassis.frontMassDist Vehicle.aero.aeroBalance,...
         Vehicle.susp.LatLTD Vehicle.brakes.bias];
 end
-soln.obj_func = myObjective(soln.state,soln.control, F.weights, Track);
+soln.obj_func = (myObjective(soln.state,soln.control, F.weights, Track));
 
 
 end
@@ -141,6 +141,7 @@ integrand = Controller.fnObjectiveCasadi(x,u,Track);   % Calculate the integrand
 
 % Calculate laptime via integration
 laptime = ds*integrand*weights;  % Integration
+% laptime = trapz(Track.sLap,integrand);  % Integration
 
 % absTau = abs(x(11,:));
 % sumInvTau = trapz(1./absTau)^2;

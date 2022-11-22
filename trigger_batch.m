@@ -7,8 +7,7 @@ clc;
 
 %% Defines the folder name where the simulations results will be stored.
 
-folder_name = 'testing_casadi_v2_more_points';
-
+folder_name = 'budapest_batch_v2';
 
 % Folder path where the simulation results will be stored
 results_folder = [pwd '\' 'SimResults'];
@@ -25,7 +24,7 @@ base_folder_adress = [results_folder '\' folder_name];
 inputFolder = [pwd '\+Model'];
 
 % Name of the spredsheet file. Change based on what is the vehicle parameters you want to load 
-setup_name4wm = [inputFolder '\LMP2_OS.xlsx'];
+setup_name4wm = [inputFolder '\LLTD_sweep.xlsx'];
 
 % Gets the number of simulations based on the amount of different vehicles defined
 number_of_sims = height(readtable(setup_name4wm,'Sheet','MassInertia'));
@@ -46,7 +45,7 @@ for ii = 1:number_of_sims
     %         if the simulation will optimize vehicle parameters
     %         if the simulation contains fuel saving constraints
     %         if the simulation contains tire energy saving constraints
-    problem = Initialize.fnInitMethod('trapezoid',1500,true,false,false);
+    problem = Initialize.fnInitMethod('trapezoid',800,false,false,false);
 
     problem = Initialize.fnInitVehicleSheet(problem,ii,setup_name4wm);
 
@@ -60,7 +59,7 @@ for ii = 1:number_of_sims
     %% Get initial estimate
     % You need an initial guess for solving the BVP
     
-    problem = PreProcessing.fnGetInitialEstimate(problem, 'Load');
+    problem = PreProcessing.fnGetInitialEstimate(problem, 'PreSim');
     
     %% Set solver options and solve the Minimum Time Maneuvre 
     
@@ -108,3 +107,7 @@ end
 % .mat file for loading it if necessary 
 
 save(base_folder_adress+"\"+"sim.mat")
+
+%%
+
+PostProcessing.ploting_script

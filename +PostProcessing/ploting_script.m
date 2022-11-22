@@ -61,11 +61,11 @@ stbi = O(41,:);
 
 thetaModel = interp1(Track.distance,Track.aYaw,Track.sLap) + x_star(2,:);
 
-xModel = interp1(Track.distance,Track.xCar,Track.sLap) - x_star(1,:).*sin(thetaModel);
-yModel = interp1(Track.distance,Track.yCar,Track.sLap) + x_star(1,:).*cos(thetaModel);
+% xModel = interp1(Track.distance,Track.xCar,Track.sLap) - x_star(1,:).*sin(thetaModel);
+% yModel = interp1(Track.distance,Track.yCar,Track.sLap) + x_star(1,:).*cos(thetaModel);
 
-% xModel = Track.xCar - x_star(1,:);
-% yModel = Track.yCar + x_star(1,:);
+xModel = interp1(Track.distance,Track.xCar,Track.sLap) + x_star(1,:).*sin(thetaModel);
+yModel = interp1(Track.distance,Track.yCar,Track.sLap) - x_star(1,:).*cos(thetaModel);
 
 
 %% ploting trajectory

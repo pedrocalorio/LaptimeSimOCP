@@ -19,22 +19,22 @@ problem.bounds.state.low        = [-TrackWidth/2+VehicleTrack/2 -inf   0 -inf -i
 problem.bounds.state.upp        = [ TrackWidth/2-VehicleTrack/2  inf inf  inf  inf inf.*ones(1,4) pi 1]';
 
 % Upper and lower bound on the initial state
-problem.bounds.initialState.low = [-TrackWidth/2+VehicleTrack/2 -pi/4 0/3.6 -0.5 -1e-5 zeros(1,4) -1e-5 0]';
-problem.bounds.initialState.upp = [ TrackWidth/2-VehicleTrack/2  pi/4 Vx0    0.5  1e-5 Vx0/rl_f Vx0/rl_f Vx0/rl_r Vx0/rl_r 1e-5 1]';
+problem.bounds.initialState.low = [-TrackWidth/2+VehicleTrack/2 -pi/4 0/3.6 -0.5 -1e-5 zeros(1,4) -1e-2 0]';
+problem.bounds.initialState.upp = [ TrackWidth/2-VehicleTrack/2  pi/4 Vx0    0.5  1e-5 Vx0/rl_f Vx0/rl_f Vx0/rl_r Vx0/rl_r 1e-2 1]';
 
 % Upper and lower bound on the final state
-problem.bounds.finalState.low   = [-TrackWidth/2+VehicleTrack/2 -pi/4 0/3.6 -0.5 -1e-5 zeros(1,4) -1e-5 0]';
-problem.bounds.finalState.upp   = [ TrackWidth/2-VehicleTrack/2  pi/4 Vx0    0.5  1e-5 Vx0/rl_f Vx0/rl_f Vx0/rl_r Vx0/rl_r 1e-5 1]';
+problem.bounds.finalState.low   = [-TrackWidth/2+VehicleTrack/2 -pi/4 0/3.6 -0.5 -1e-5 zeros(1,4) -1e-2 0]';
+problem.bounds.finalState.upp   = [ TrackWidth/2-VehicleTrack/2  pi/4 Vx0    0.5  1e-5 Vx0/rl_f Vx0/rl_f Vx0/rl_r Vx0/rl_r 1e-2 1]';
 
 % Upper and lower bound on the control inputs
-problem.bounds.control.low = [-pi/4 -4 -inf -inf]';
-problem.bounds.control.upp = [ pi/4  4  inf  inf]';
+problem.bounds.control.low = [-pi/3 -5 -inf -inf]';
+problem.bounds.control.upp = [ pi/3  5  inf  inf]';
 
-problem.bounds.initialControl.low = [-0.001 -0.1 -inf -inf]';
-problem.bounds.initialControl.upp = [ 0.001  0.1  inf  inf]';
+problem.bounds.initialControl.low = [-0.001 -5 -inf -inf]';
+problem.bounds.initialControl.upp = [ 0.001  5  inf  inf]';
 
-problem.bounds.finalControl.low = [-0.001 -0.1 -inf -inf]';
-problem.bounds.finalControl.upp = [ 0.001  0.1  inf  inf]';
+problem.bounds.finalControl.low = [-0.001 -5 -inf -inf]';
+problem.bounds.finalControl.upp = [ 0.001  5  inf  inf]';
 
 %% defines the lower and upper bounds on the values admissible by the optimizer when optimizing the vehicle parameters 
 

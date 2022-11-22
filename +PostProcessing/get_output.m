@@ -31,7 +31,8 @@ function O = get_output(x,u,p,Vehicle,Track)
     LatLT_norm  = u(4,:);    
 
     Sf = (1 - n.*kappa)./(vx.*cos(xi)-vy.*sin(xi));
-    cumLaptime = ds*Sf*ones(length(n),1);
+%     cumLaptime = ds*Sf*ones(length(n),1);
+    cumLaptime =cumtrapz(Track.sLap,Sf);
     
     %% Design parameters of the car
     
@@ -296,10 +297,10 @@ function O = get_output(x,u,p,Vehicle,Track)
     long_sliding_speed_3 = Vxrl.*kappa3;
     long_sliding_speed_4 = Vxrr.*kappa4;
 
-    lat_sliding_speed_1 = Vyfl.*tan(alpha1);
-    lat_sliding_speed_2 = Vyfr.*tan(alpha2);
-    lat_sliding_speed_3 = Vyrl.*tan(alpha3);
-    lat_sliding_speed_4 = Vyrr.*tan(alpha4);
+    lat_sliding_speed_1 = Vxfl.*tan(alpha1);
+    lat_sliding_speed_2 = Vxfr.*tan(alpha2);
+    lat_sliding_speed_3 = Vxrl.*tan(alpha3);
+    lat_sliding_speed_4 = Vxrr.*tan(alpha4);
 
     sliding_power_lateral_1 = lat_sliding_speed_1 .* Fy1 ; %[w]
     sliding_energy_lateral_1 = cumtrapz(cumLaptime,abs(sliding_power_lateral_1))./1; % J
