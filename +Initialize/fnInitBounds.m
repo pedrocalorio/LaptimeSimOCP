@@ -47,7 +47,6 @@ if problem.options.optimalDesignFlag == true
 else
 
     problem.bounds.design.low = []';
-
     problem.bounds.design.upp = []';
 
 end

@@ -331,8 +331,15 @@ function O = get_output(x,u,p,Vehicle,Track)
     sliding_energy_longitudinal_4 = cumtrapz(cumLaptime,abs(sliding_power_longitudinal_4))./1; % J
  
 %     O = [];
+    thetaModel = interp1(Track.distance,Track.aYaw,Track.sLap) + x(2,:);
     
-    O = zeros(54,length(x(1,:))); 
+    % xModel = interp1(Track.distance,Track.xCar,Track.sLap) - x_star(1,:).*sin(thetaModel);
+    % yModel = interp1(Track.distance,Track.yCar,Track.sLap) + x_star(1,:).*cos(thetaModel);
+    
+    xModel = interp1(Track.distance,Track.xCar,Track.sLap) + x(1,:).*sin(thetaModel);
+    yModel = interp1(Track.distance,Track.yCar,Track.sLap) - x(1,:).*cos(thetaModel);
+    
+    O = zeros(56,length(x(1,:))); 
     O(1,:) = cumLaptime;
     O(2,:) = (Fy./m) ;
     O(3,:) = deltaFzf_lat;
@@ -341,7 +348,6 @@ function O = get_output(x,u,p,Vehicle,Track)
     O(6,:) = deltaFzr_long;
     O(7,:) = throttle;
     O(8,:) = brakes;
-%     O(9,:) = sqrt( vx.^2 + vy.^2 );
     O(9,:) = vx;
     O(10,:) = sliding_energy_lateral_1;
     O(11,:) = sliding_energy_lateral_2;
@@ -387,7 +393,9 @@ function O = get_output(x,u,p,Vehicle,Track)
     O(51,:) = sliding_power_longitudinal_2;
     O(52,:) = sliding_power_longitudinal_3;
     O(53,:) = sliding_power_longitudinal_4;
-    O(54,:) = rad2deg(x(8,:));
-
+    O(54,:) = rad2deg(steer);
+    O(55,:) = xModel;
+    O(56,:) = yModel;
+ 
 
 end

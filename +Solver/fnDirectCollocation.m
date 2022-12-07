@@ -31,6 +31,7 @@ end
 xLow = [B.initialState.low, B.state.low*ones(1,nGrid-2), B.finalState.low];
 uLow = [B.initialControl.low, B.control.low*ones(1,nGrid-2), B.finalControl.low];
 pLow = B.design.low;
+
 % Special condition for when the track is generated with GPS
 xLow(1,:) = interp1(Track.distance,Track.left_offset,Track.sLap) + Vehicle.chassis.frontTrack/2;
 
@@ -38,11 +39,12 @@ xLow(1,:) = interp1(Track.distance,Track.left_offset,Track.sLap) + Vehicle.chass
 xUpp = [B.initialState.upp, B.state.upp*ones(1,nGrid-2), B.finalState.upp];
 uUpp = [B.initialControl.upp, B.control.upp*ones(1,nGrid-2), B.finalControl.upp];
 pUpp = B.design.upp;
+
 % Special condition for when the track is generated with GPS
 xUpp(1,:) = interp1(Track.distance,Track.right_offset,Track.sLap) - Vehicle.chassis.frontTrack/2;
 
 
-%% Create the design variables of the optimization problem in CasADi MX variable 
+%%Create the design variables of the optimization problem in CasADi MX variable 
 opti = casadi.Opti();
 if nDesign~=0    
 
@@ -50,7 +52,7 @@ if nDesign~=0
     uk = opti.variable(4,nGrid);
     pk = opti.variable(4);
     
-    %% Set up the functions, bounds, and options for fmincon
+    % Set up the functions, bounds, and options for fmincon
     
     J =  myObjective(xk, uk, F.weights, Track) ;
     q =  myConstraint(xk, uk, pk, F.defectCst, Track, Vehicle, savingConstraintsBounds) ;

@@ -2,17 +2,19 @@ function [Torque_FL,Torque_FR,Torque_RL,Torque_RR,fTauPos,fTauNeg,omega_e,...
     Pe] = get_wheel_torque3(tau,Vehicle,x,p)
 
     % Calculated wheel speeds from the system states
-    omega3 = x(6,:); %rad/s
-    omega4 = x(7,:); %rad/s
+    omega3 = x(8,:); %rad/s
+    omega4 = x(9,:); %rad/s
 
     % Calculates positive and negative longitudinal control input variables
     fTauPos = tau .* (tanh(100*tau) + 1)/2;
     fTauNeg = tau .* (tanh(-100*tau) + 1)/2;
     
     % Gear ratio
+%     speed = casadi.DM(length(x(3,:)),1)';
+    speed = x(3,:);
     Gr = interp1(Vehicle.engine.Gr(:,2),...
         Vehicle.engine.Gr(:,1),...
-        x(1,:)*3.6,... % interpolate speed in km/h
+        speed,... % interpolate speed in km/h
         "linear","extrap");
     
     % Brakes    
@@ -54,7 +56,7 @@ function [Torque_FL,Torque_FR,Torque_RL,Torque_RR,fTauPos,fTauNeg,omega_e,...
 %     Te = fTauPos.*( (Pe./omega_e) - Te_drag);   
     
     % Calculates the torque difference between the wheels 
-    delta_T = A.*sin(atan(B.*(x(7,:)-x(6,:)) ));
+    delta_T = A.*sin(atan(B.*(omega4-omega3) ));
     
     Tf     = brk_bias*brk_max_torque .* fTauNeg;
     Tr_brk = ( (1-brk_bias)*brk_max_torque + Te_drag) .* fTauNeg;
