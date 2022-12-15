@@ -47,6 +47,21 @@ Fy2 = O(23,:);
 Fy3 = O(24,:);
 Fy4 = O(25,:);
 
+Fx1 = O(26,:);
+Fx2 = O(27,:);
+Fx3 = O(28,:);
+Fx4 = O(29,:);
+
+Fx1_norm = O(65,:);
+Fx2_norm = O(66,:);
+Fx3_norm = O(67,:);
+Fx4_norm = O(68,:);
+
+Fy1_norm = O(69,:);
+Fy2_norm = O(70,:);
+Fy3_norm = O(71,:);
+Fy4_norm = O(72,:);
+
 YM_fx = O(38,:);
 YM_fy = O(39,:);
 YM_mz = O(40,:);
@@ -414,6 +429,83 @@ plot(Track.sLap,Fz4,'Color',[1 0.8 0.0],'LineWidth',2)
 title('Tire Normal Load - RR','Interpreter','latex')
 ylabel('Force [N]','Interpreter','latex')
 xlabel('Distance [m]','Interpreter','latex')
+% ylim([0*min(Fz1) 8e3])
+grid minor
+set(gca,'FontSize',13)
+
+%% Lateral tire efficiency 
+
+% figure;plotbrowser;
+subplot(2,2,1)
+plot(Track.sLap,Fy1_norm,'Color',[1 0 0],'LineWidth',2)
+title('Tire Lateral Efficiency - FL','Interpreter','latex')
+ylabel('Force [N]','Interpreter','latex')
+xlabel('Efficiency [-]','Interpreter','latex')
+% ylim([0*min(Fz1) max(Fz2)])
+% ylim([0*min(Fz1) 8e3])
+grid minor
+%%
+set(gca,'FontSize',13)
+subplot(2,2,2)
+plot(Track.sLap,Fy2_norm,'Color',[0.2 0.8 0],'LineWidth',2)
+title('Tire Lateral Efficiency - FR','Interpreter','latex')
+ylabel('Force [N]','Interpreter','latex')
+xlabel('Efficiency [-]','Interpreter','latex')
+% ylim([0*min(Fz1) 8e3])
+grid minor
+set(gca,'FontSize',13)
+%%
+subplot(2,2,3)
+plot(Track.sLap,Fy3_norm,'Color',[0.3 0.3 1],'LineWidth',2)
+title('Tire Lateral Efficiency - RL','Interpreter','latex')
+ylabel('Force [N]','Interpreter','latex')
+xlabel('Efficiency [-]','Interpreter','latex')
+% ylim([0*min(Fz1) 8e3])
+grid minor
+set(gca,'FontSize',13)
+%%
+subplot(2,2,4)
+plot(Track.sLap,Fy4_norm,'Color',[1 0.8 0.0],'LineWidth',2)
+title('Tire Lateral Efficiency - RR','Interpreter','latex')
+ylabel('Force [N]','Interpreter','latex')
+xlabel('Efficiency [-]','Interpreter','latex')
+% ylim([0*min(Fz1) 8e3])
+grid minor
+set(gca,'FontSize',13)
+
+%% Longitudinal tire efficiency 
+
+figure;plotbrowser;
+subplot(2,2,1)
+plot(Track.sLap,Fx1_norm,'Color',[1 0 0],'LineWidth',2)
+title('Tire Longitudinal Efficiency - FL','Interpreter','latex')
+ylabel('Force [N]','Interpreter','latex')
+xlabel('Efficiency [-]','Interpreter','latex')
+% ylim([0*min(Fz1) max(Fz2)])
+% ylim([0*min(Fz1) 8e3])
+grid minor
+set(gca,'FontSize',13)
+subplot(2,2,2)
+plot(Track.sLap,Fx2_norm,'Color',[0.2 0.8 0],'LineWidth',2)
+title('Tire Longitudinal Efficiency - FR','Interpreter','latex')
+ylabel('Force [N]','Interpreter','latex')
+xlabel('Efficiency [-]','Interpreter','latex')
+% ylim([0*min(Fz1) 8e3])
+grid minor
+set(gca,'FontSize',13)
+subplot(2,2,3)
+plot(Track.sLap,Fx3_norm,'Color',[0.3 0.3 1],'LineWidth',2)
+title('Tire Longitudinal Efficiency - RL','Interpreter','latex')
+ylabel('Force [N]','Interpreter','latex')
+xlabel('Efficiency [-]','Interpreter','latex')
+% ylim([0*min(Fz1) 8e3])
+grid minor
+set(gca,'FontSize',13)
+subplot(2,2,4)
+plot(Track.sLap,Fx4_norm,'Color',[1 0.8 0.0],'LineWidth',2)
+title('Tire Longitudinal Efficiency - RR','Interpreter','latex')
+ylabel('Force [N]','Interpreter','latex')
+xlabel('Efficiency [-]','Interpreter','latex')
 % ylim([0*min(Fz1) 8e3])
 grid minor
 set(gca,'FontSize',13)

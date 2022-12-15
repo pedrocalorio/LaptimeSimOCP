@@ -55,13 +55,13 @@ if nDesign~=0
     % Set up the functions, bounds, and options for fmincon
     
     J =  myObjective(xk, uk, F.weights, Track) ;
-    q =  myConstraint(xk, uk, pk, F.defectCst, Track, Vehicle, savingConstraintsBounds) ;
+    [q,g] =  myConstraint(xk, uk, pk, F.defectCst, Track, Vehicle, savingConstraintsBounds) ;
 %     g =  myIneqConstraint(xk, uk, pk, F.defectCst, Track, Vehicle, savingConstraintsBounds) ;
     
     opti.minimize(  J   );
     
     opti.subject_to( q==0 );
-%     opti.subject_to( g<=0 );
+    opti.subject_to( g<=0 );
     opti.subject_to( xLow<=xk<=xUpp );
     opti.subject_to( uLow<=uk<=uUpp );
     opti.subject_to( pLow<=pk<=pUpp );
@@ -85,13 +85,13 @@ else
     %% Set up the functions, bounds, and options for fmincon
     
     J =  myObjective(xk, uk, F.weights, Track) ;
-    q =  myConstraint(xk, uk, pk, F.defectCst, Track, Vehicle, savingConstraintsBounds) ;
+    [q,g] =  myConstraint(xk, uk, pk, F.defectCst, Track, Vehicle, savingConstraintsBounds) ;
 %     g =  myIneqConstraint(xk, uk, pk, F.defectCst, Track, Vehicle, savingConstraintsBounds) ;
     
     opti.minimize(  J   );
     
     opti.subject_to( q==0 );
-%     opti.subject_to( g<=0 );
+    opti.subject_to( g<=0 );
     opti.subject_to( xLow<=xk<=xUpp );
     opti.subject_to( uLow<=uk<=uUpp );
     opti.set_initial(xk, xGuess);
@@ -156,7 +156,7 @@ end
 
 %% Constraint Function
 
-function [ceq] = myConstraint(x,u,p,defectCst,Track,Vehicle,savingConstraintsBounds)
+function [ceq,c] = myConstraint(x,u,p,defectCst,Track,Vehicle,savingConstraintsBounds)
 % This function computes the defects along the path
 % and then evaluates the user-defined constraint functions
 
@@ -172,7 +172,7 @@ ds = (sLap(end) - sLap(1)) / (nGrid - 1);
 
 % gets the vehicle states derivative IN TIME
 
-[dx_vehicle,g,q,~,savingConstraints] = Controller.fnDynamicsVehicle(x,u,p,...
+[dx_vehicle,g,q,savingConstraints] = Controller.fnDynamicsVehicle(x,u,p,...
                                             Vehicle,...
                                             Track);
 
@@ -198,56 +198,10 @@ dx = [dx_track; dx_vehicle];
 defects = defectCst(ds,x,dx);
 
 % Call user-defined constraints and combine with defects
-[ceq,~] = Solver.fnCollectConstraints(defects,g,q,x,u,savingConstraints,savingConstraintsBounds);
+[ceq,c] = Solver.fnCollectConstraints(defects,g,q,x,u,savingConstraints,savingConstraintsBounds);
 
 
 
 end
 
-function [c] = myIneqConstraint(x,u,p,defectCst,Track,Vehicle,savingConstraintsBounds)
-% This function computes the defects along the path
-% and then evaluates the user-defined constraint functions
 
-sLap = Track.sLap;
-
-nGrid = length(sLap);
-
-kappa = interp1(Track.distance,Track.curv,Track.sLap,'spline');
-
-% Calculate defects along the path
-ds = (sLap(end) - sLap(1)) / (nGrid - 1);
-
-
-% gets the vehicle states derivative IN TIME
-
-[dx_vehicle,g,q,~,savingConstraints] = Controller.fnDynamicsVehicle(x,u,p,...
-                                            Vehicle,...
-                                            Track);
-
-n       = x(1,:); % velocity
-zeta    = x(2,:); % body-slip angle
-vx      = x(3,:); % velocity
-vy      = x(4,:); % body-slip angle
-
-% Calculates the conversion factor for the transformation, which is the
-% inverse speed along the center line
-Sf = (1 - n.*kappa)./(vx.*cos(zeta)-vy.*sin(zeta));
-
-% Transform vehicle state into space/distance dependent 
-dx_vehicle = (Sf'.*dx_vehicle')';
-
-% Gets the track states derivative IN SPACE/DISTANCE
-dx_track = Controller.fnDynamicsTrack(x,Track);
-
-% Joins the state vector into one
-dx = [dx_track; dx_vehicle];
-
-% Gets the defects to enforce continous dynamics
-defects = defectCst(ds,x,dx);
-
-% Call user-defined constraints and combine with defects
-[~,c] = Solver.fnCollectConstraints(defects,g,q,x,u,savingConstraints,savingConstraintsBounds);
-
-
-
-end

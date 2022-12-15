@@ -10,12 +10,12 @@ function [Torque_FL,Torque_FR,Torque_RL,Torque_RR,fTauPos,fTauNeg,omega_e,...
     fTauNeg = tau .* (tanh(-100*tau) + 1)/2;
     
     % Gear ratio
-%     speed = casadi.DM(length(x(3,:)),1)';
     speed = x(3,:);
-    Gr = interp1(Vehicle.engine.Gr(:,2),...
-        Vehicle.engine.Gr(:,1),...
-        speed,... % interpolate speed in km/h
-        "linear","extrap");
+
+    speed_interp = Vehicle.engine.Gr(:,2)';
+    gear_interp = Vehicle.engine.Gr(:,1)';
+    gr = casadi.interpolant('gr','linear',{speed_interp},gear_interp);
+%     Gr = Gr_int(speed);
     
     % Brakes    
 %     brk_bias       = Vehicle.brakes.bias;
@@ -38,17 +38,21 @@ function [Torque_FL,Torque_FR,Torque_RL,Torque_RR,fTauPos,fTauNeg,omega_e,...
     Te_drag = 2*Pe_drag./(omega3+omega4);
     
     % Engine rotational velocity - RPM
-    omega_e     = 2.625*Gr.*(omega3+omega4)/2 ; %rad/s
+    omega_e     = 2.625*gr(speed).*(omega3+omega4)/2 ; %rad/s
     omega_e_rpm = omega_e * 30/pi ; %rpm
+
+    % Calculating the engine power
+
+    P_rpm_int = casadi.interpolant('P_rpm_int','bspline',{Vehicle.engine.RPM},...
+        Vehicle.engine.Power_R);
+    P_rpm = P_rpm_int(omega_e_rpm);
+
+    P_tps_int = casadi.interpolant('P_tps_int','bspline',{Vehicle.engine.Throttle},...
+        Vehicle.engine.Power_T);
+    P_tps = P_tps_int(100.*fTauPos);
     
-    Pe = P_max .* interp1(Vehicle.engine.RPM,...
-        Vehicle.engine.Power_R,...
-        omega_e_rpm,...
-        'spline','extrap') .*...
-        interp1(Vehicle.engine.Throttle,...
-        Vehicle.engine.Power_T,...
-        100.*fTauPos,...
-        'spline','extrap');
+    Pe = P_max .* P_rpm .* P_tps;
+%     Pe = P_max;
     
 %     Te = fTauPos.*( (2*Pe./(omega3 + omega4)) - Te_drag);   
     Te = fTauPos.*( Pe./omega_e );   
@@ -67,8 +71,8 @@ function [Torque_FL,Torque_FR,Torque_RL,Torque_RR,fTauPos,fTauNeg,omega_e,...
     % Torque at each wheels
     Torque_FL = Tf/2;
     Torque_FR = Tf/2;
-    Torque_RL = ((Te.*2.6250)/2+Tr_brk/2) + delta_T;
-    Torque_RR = ((Te.*2.6250)/2+Tr_brk/2) - delta_T;
+    Torque_RL = (Te/2+Tr_brk/2) + delta_T;
+    Torque_RR = (Te/2+Tr_brk/2) - delta_T;
 %     Torque_RL = (Te/2+Tr_brk/2) + delta_T;
 %     Torque_RR = (Te/2+Tr_brk/2) - delta_T;
 

@@ -8,7 +8,7 @@ switch problem.options.method
     case 'trapezoid'
         problem.options.trapezoid.nGrid = nOfPoints;
     case 'hermiteSimpson'
-        problem.options.hermiteSimpson.nSegment = 380;
+        problem.options.hermiteSimpson.nSegment = 400;
     otherwise
         error('Invalid method.');
 end

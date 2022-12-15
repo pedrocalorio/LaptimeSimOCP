@@ -1,4 +1,5 @@
-function [ceq,c] = fnCollectConstraints(defects,g,q,x,u,saving_constraints,saving_constraints_bound)
+function [ceq,c] = fnCollectConstraints(defects,g,q,x,u,...
+    saving_constraints,saving_constraints_bound)
 
 % collect deffects from collocation method to put in the ceq matrix of
 % fmincon
@@ -17,20 +18,24 @@ ceq_vehicle = reshape(q,numel(q),1);
 
 % constraints so that the beggning and the end of the lap is the same
 ceq_initial  = [x(1,1) x(2,1) x(3,1) x(4,1) x(5,1) x(8,1) x(9,1) x(10,1) x(11,1) u(1,1) u(2,1) u(3,1) u(4,1)];
-
 ceq_terminal = [x(1,end) x(2,end) x(3,end) x(4,end) x(5,end) x(8,end) x(9,end) x(10,end) x(11,end) u(1,end) u(2,end) u(3,end) u(4,end)];
+% ceq_initial  = [ x(3,1) x(8,1) x(9,1) x(10,1) x(11,1) ];
+% ceq_terminal = [ x(3,end) x(8,end) x(9,end) x(10,end) x(11,end) ];
 
-% inequality constraints on having always positve cornering stiffness and
-% slip stiffness 
+% ceq_initial  = [x(:,1); u(:,1)]';
+% ceq_terminal = [x(:,end); u(:,end)]';
+
+
+% Inequality constraints on having always positve cornering stiffness and slip stiffness 
 c = reshape(g,numel(g),1);
-% c = [];
+
 
 if saving_constraints_bound.fuel ~= -1
     c = [c; saving_constraints.fuel-saving_constraints_bound.fuel];
 end
 
 if saving_constraints_bound.tire_energy ~= -1
-    c = [c; saving_constraints.tire_energy-saving_constraints_bound.tire_energy];
+    c = [c; (saving_constraints.tire_energy-saving_constraints_bound.tire_energy)];
 end
 
 

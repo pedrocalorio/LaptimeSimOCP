@@ -152,31 +152,39 @@ function O = get_output(x,u,p,Vehicle,Track)
     [Fx3,Fy3,Mz3]  = Solver.MF5ss_eval(Fz3,kappa3,alpha3,0,MF_r);    
     [Fx4,Fy4,Mz4]  = Solver.MF5ss_eval(Fz4,kappa4,alpha4,0,MF_r);   
 
-    % WHEN USING MFEVAL TO CALCULATE TIRE FORCES FROM MAGIC FORMULA
+    Fx1_norm = zeros(length(x(1,:)),1); Fx2_norm = zeros(length(x(1,:)),1);
+    Fx3_norm = zeros(length(x(1,:)),1); Fx4_norm = zeros(length(x(1,:)),1);
 
-%     side_left = 1;
-%     side_right = -1;
-%     
-%     arrayZeros = zeros(1,length(kappa1))';
-%     
-%     mfInputs_1 = [Fz1',kappa1',-alpha1'*side_left,...
-%         arrayZeros,arrayZeros,omega1'.*Rl1,1.8e5*ones(length(kappa1),1),omega1'];
-%     mfInputs_2 = [Fz2',kappa2',-alpha2'*side_right,...
-%         arrayZeros,arrayZeros,omega2'.*Rl2,1.8e5*ones(length(kappa1),1),omega2'];
-%     mfInputs_3 = [Fz3',kappa3',-alpha3'*side_left,...
-%         arrayZeros,arrayZeros,omega3'.*Rl3,1.8e5*ones(length(kappa1),1),omega3'];
-%     mfInputs_4 = [Fz4',kappa4',-alpha4'*side_right,...
-%         arrayZeros,arrayZeros,omega4'.*Rl4,1.8e5*ones(length(kappa1),1),omega4'];
-%     
-%     mfeval_o_1 = mfeval(Vehicle.tire_1.MF, mfInputs_1, 211);   
-%     mfeval_o_2 = mfeval(Vehicle.tire_2.MF, mfInputs_2, 211);   
-%     mfeval_o_3 = mfeval(Vehicle.tire_3.MF, mfInputs_3, 211);   
-%     mfeval_o_4 = mfeval(Vehicle.tire_4.MF, mfInputs_4, 211);   
-%     
-%     [Fx1,Fy1,Mz1,C_x_1,C_y_1] = get_tire_cp_forces(mfeval_o_1, side_left);
-%     [Fx2,Fy2,Mz2,C_x_2,C_y_2] = get_tire_cp_forces(mfeval_o_2, side_right);
-%     [Fx3,Fy3,Mz3,C_x_3,C_y_3] = get_tire_cp_forces(mfeval_o_3, side_left);
-%     [Fx4,Fy4,Mz4,C_x_4,C_y_4] = get_tire_cp_forces(mfeval_o_4, side_right);
+    Fy1_norm = zeros(length(x(1,:)),1); Fy2_norm = zeros(length(x(1,:)),1);    
+    Fy3_norm = zeros(length(x(1,:)),1); Fy4_norm = zeros(length(x(1,:)),1);   
+
+    kappa_range = linspace(-0.5,0.5,100);
+    alpha_range = deg2rad(linspace(-10,10,100));
+    for i=1:length(kappa1) 
+
+        [~,Fy1_max,~] = ( Solver.MF5ss_eval(Fz1(i)*ones(1,length(kappa_range)),linspace(0,0,100),alpha_range,0,MF_f) );    
+        [~,Fy2_max,~] = ( Solver.MF5ss_eval(Fz2(i)*ones(1,length(kappa_range)),linspace(0,0,100),alpha_range,0,MF_f) );   
+        [~,Fy3_max,~] = ( Solver.MF5ss_eval(Fz3(i)*ones(1,length(kappa_range)),linspace(0,0,100),alpha_range,0,MF_r) );   
+        [~,Fy4_max,~] = ( Solver.MF5ss_eval(Fz4(i)*ones(1,length(kappa_range)),linspace(0,0,100),alpha_range,0,MF_r) );  
+
+        [Fx1_max,~,~] = ( Solver.MF5ss_eval(Fz1(i)*ones(1,length(kappa_range)),kappa_range,linspace(0,0,100),0,MF_f) );    
+        [Fx2_max,~,~] = ( Solver.MF5ss_eval(Fz2(i)*ones(1,length(kappa_range)),kappa_range,linspace(0,0,100),0,MF_f) );   
+        [Fx3_max,~,~] = ( Solver.MF5ss_eval(Fz3(i)*ones(1,length(kappa_range)),kappa_range,linspace(0,0,100),0,MF_r) );   
+        [Fx4_max,~,~] = ( Solver.MF5ss_eval(Fz4(i)*ones(1,length(kappa_range)),kappa_range,linspace(0,0,100),0,MF_r) );  
+
+        Fx1_norm(i) = abs(Fx1(i))/max(abs(Fx1_max)); Fx2_norm(i) = abs(Fx2(i))/max(abs(Fx2_max));
+        Fx3_norm(i) = abs(Fx3(i))/max(abs(Fx3_max)); Fx4_norm(i) = abs(Fx4(i))/max(abs(Fx4_max));
+    
+        Fy1_norm(i) = abs(Fy1(i))/max(abs(Fy1_max)); Fy2_norm(i) = abs(Fy2(i))/max(abs(Fy2_max));
+        Fy3_norm(i) = abs(Fy3(i))/max(abs(Fy3_max)); Fy4_norm(i) = abs(Fy4(i))/max(abs(Fy4_max));
+
+    end
+
+%     Fx1_norm = Fx1./Fx1_max; Fx2_norm = Fx2./Fx2_max;
+%     Fx3_norm = Fx3./Fx3_max; Fx4_norm = Fx4./Fx4_max;
+% 
+%     Fy1_norm = Fy1./Fy1_max; Fy2_norm = Fy2./Fy2_max;
+%     Fy3_norm = Fy3./Fy3_max; Fy4_norm = Fy4./Fy4_max;
 
     
     % Drag force
@@ -193,6 +201,8 @@ function O = get_output(x,u,p,Vehicle,Track)
     YMfromFy = a*( (Fx1+Fx2).*sin(delta) + (Fy1+Fy2).*cos(delta) ) - b*(Fy3+Fy4);  
     YMfromFx = frontTrack/2.*((Fx1-Fx2).*cos(delta) - (Fy1-Fy2).*sin(delta)) + rearTrack/2.*(Fx3-Fx4);
     YMfromMz = Mz1+Mz2+Mz3+Mz4;
+
+    YMnet = YMfromFy+YMfromFx+YMfromMz;
     
     %% Wheel torques
 
@@ -273,8 +283,21 @@ function O = get_output(x,u,p,Vehicle,Track)
     end
 
  
+    Ct = Cf+Cr;
 
+    wb = a+b;
 
+    stbi = -((a*Cf-b*Cr)./(Ct*wb));
+
+    wb = a+b;
+    delta_kin = wb*r./vx;
+    theta_uang = delta-delta_kin;
+    theta_lim_uang = deg2rad(10);
+    C_uang = (theta_uang/theta_lim_uang).^2-1;
+
+    beta = atan(vy./vx);
+    beta_lim = deg2rad(10);
+    C_beta = (beta/beta_lim).^2-1;
 
     
 
@@ -304,31 +327,35 @@ function O = get_output(x,u,p,Vehicle,Track)
 
     sliding_power_lateral_1 = lat_sliding_speed_1 .* Fy1 ; %[w]
     sliding_energy_lateral_1 = cumtrapz(cumLaptime,abs(sliding_power_lateral_1))./1; % J
-%     sliding_energy_lateral_1 = ds*abs(sliding_power_lateral_1)*ones(length(n),1); % J
+    sliding_energy_lateral_1_dist = ds*abs(sliding_power_lateral_1)*ones(length(n),1); % J
 
     sliding_power_lateral_2 = lat_sliding_speed_2 .* Fy2 ; %[w]
     sliding_energy_lateral_2 = cumtrapz(cumLaptime,abs(sliding_power_lateral_2))./1; % J
-%     sliding_energy_lateral_2 = ds*abs(sliding_power_lateral_2)*ones(length(n),1); % J
+    sliding_energy_lateral_2_dist = ds*abs(sliding_power_lateral_2)*ones(length(n),1); % J
 
     sliding_power_lateral_3 = lat_sliding_speed_3 .* Fy3 ; %[w]
     sliding_energy_lateral_3 = cumtrapz(cumLaptime,abs(sliding_power_lateral_3))./1; % J
-%     sliding_energy_lateral_3 = ds*abs(sliding_power_lateral_3)*ones(length(n),1); % J
+    sliding_energy_lateral_3_dist = ds*abs(sliding_power_lateral_3)*ones(length(n),1); % J
 
     sliding_power_lateral_4 = lat_sliding_speed_4 .* Fy4 ; %[w]
     sliding_energy_lateral_4 = cumtrapz(cumLaptime,abs(sliding_power_lateral_4))./1; % J 
-%     sliding_energy_lateral_4 = ds*abs(sliding_power_lateral_4)*ones(length(n),1); % J 
+    sliding_energy_lateral_4_dist = ds*abs(sliding_power_lateral_4)*ones(length(n),1); % J 
 
     sliding_power_longitudinal_1 = long_sliding_speed_1 .* Fx1 ; %[w]
     sliding_energy_longitudinal_1 = cumtrapz(cumLaptime,abs(sliding_power_longitudinal_1))./1; % J
+    sliding_energy_longitudinal_1_dist = ds*abs(sliding_power_longitudinal_1)*ones(length(n),1); % J
 
     sliding_power_longitudinal_2 = long_sliding_speed_2 .* Fx2 ; %[w]
     sliding_energy_longitudinal_2 = cumtrapz(cumLaptime,abs(sliding_power_longitudinal_2))./1; % J
+    sliding_energy_longitudinal_2_dist = ds*abs(sliding_power_longitudinal_2)*ones(length(n),1); % J
 
     sliding_power_longitudinal_3 = long_sliding_speed_3 .* Fx3 ; %[w]
     sliding_energy_longitudinal_3 = cumtrapz(cumLaptime,abs(sliding_power_longitudinal_3))./1; % J
+    sliding_energy_longitudinal_3_dist = ds*abs(sliding_power_longitudinal_3)*ones(length(n),1); % J
     
     sliding_power_longitudinal_4 = long_sliding_speed_4 .* Fx4 ; %[w]
     sliding_energy_longitudinal_4 = cumtrapz(cumLaptime,abs(sliding_power_longitudinal_4))./1; % J
+    sliding_energy_longitudinal_4_dist = ds*abs(sliding_power_longitudinal_4)*ones(length(n),1); % J
  
 %     O = [];
     thetaModel = interp1(Track.distance,Track.aYaw,Track.sLap) + x(2,:);
@@ -339,7 +366,7 @@ function O = get_output(x,u,p,Vehicle,Track)
     xModel = interp1(Track.distance,Track.xCar,Track.sLap) + x(1,:).*sin(thetaModel);
     yModel = interp1(Track.distance,Track.yCar,Track.sLap) - x(1,:).*cos(thetaModel);
     
-    O = zeros(56,length(x(1,:))); 
+%     O = zeros(56,length(x(1,:))); 
     O(1,:) = cumLaptime;
     O(2,:) = (Fy./m) ;
     O(3,:) = deltaFzf_lat;
@@ -396,6 +423,32 @@ function O = get_output(x,u,p,Vehicle,Track)
     O(54,:) = rad2deg(steer);
     O(55,:) = xModel;
     O(56,:) = yModel;
- 
+    O(57,:) = sliding_energy_lateral_1_dist;
+    O(58,:) = sliding_energy_lateral_2_dist;
+    O(59,:) = sliding_energy_lateral_3_dist;
+    O(60,:) = sliding_energy_lateral_4_dist;
+    O(61,:) = sliding_energy_longitudinal_1_dist;
+    O(62,:) = sliding_energy_longitudinal_2_dist;
+    O(63,:) = sliding_energy_longitudinal_3_dist;
+    O(64,:) = sliding_energy_longitudinal_4_dist;
+    O(65,:) = Fx1_norm;
+    O(66,:) = Fx2_norm;
+    O(67,:) = Fx3_norm;
+    O(68,:) = Fx4_norm;
+    O(69,:) = Fy1_norm;
+    O(70,:) = Fy2_norm;
+    O(71,:) = Fy3_norm;
+    O(72,:) = Fy4_norm;
+    O(73,:) = stbi;
+    O(74,:) = theta_uang;
+    O(75,:) = delta_kin;
+    O(76,:) = beta;
+    O(77,:) = gradient(YMnet)./gradient(beta);   %yaw stiffness
+    O(78,:) = gradient(YMnet)./gradient(r);      %yaw damping
+    O(79,:) = gradient(YMnet)./gradient(delta);  %yaw control moment
+    O(80,:) = gradient(Fy)./gradient(beta);   % damping in sideslip
+    O(81,:) = gradient(Fy)./gradient(r);      % yaw rate coupling derivative
+    O(82,:) = gradient(Fy)./gradient(delta);  % control force derivative
+
 
 end

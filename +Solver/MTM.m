@@ -85,8 +85,10 @@ defectMidpoint = xMid - (xUpp+xLow)/2 - ds*(fLow-fUpp)/4;
 defectInterval = xUpp - xLow - ds*(fUpp + 4*fMid + fLow)/3;
 
 % Pack up all defects: Arrnage for bandedness
-defects = zeros(nState,nGrid-1);
-defects(:,iLow) = defectInterval;
-defects(:,iMid) = defectMidpoint;
+% defects = zeros(nState,nGrid-1);
+% defects(:,iLow) = defectInterval;
+% defects(:,iMid) = defectMidpoint;
+
+defects = [defectInterval defectMidpoint];
 
 end
