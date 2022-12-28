@@ -33,7 +33,7 @@ uLow = [B.initialControl.low, B.control.low*ones(1,nGrid-2), B.finalControl.low]
 pLow = B.design.low;
 
 % Special condition for when the track is generated with GPS
-xLow(1,:) = interp1(Track.distance,Track.left_offset,Track.sLap) + Vehicle.chassis.frontTrack/2;
+% xLow(1,:) = interp1(Track.distance,Track.left_offset,Track.sLap) + Vehicle.chassis.frontTrack/2;
 
 
 xUpp = [B.initialState.upp, B.state.upp*ones(1,nGrid-2), B.finalState.upp];
@@ -41,27 +41,28 @@ uUpp = [B.initialControl.upp, B.control.upp*ones(1,nGrid-2), B.finalControl.upp]
 pUpp = B.design.upp;
 
 % Special condition for when the track is generated with GPS
-xUpp(1,:) = interp1(Track.distance,Track.right_offset,Track.sLap) - Vehicle.chassis.frontTrack/2;
+% xUpp(1,:) = interp1(Track.distance,Track.right_offset,Track.sLap) - Vehicle.chassis.frontTrack/2;
 
 
 %%Create the design variables of the optimization problem in CasADi MX variable 
 opti = casadi.Opti();
 if nDesign~=0    
 
-    xk = opti.variable(11,nGrid);
-    uk = opti.variable(4,nGrid);
+    xk = opti.variable(40,nGrid);
+    uk = opti.variable(2,nGrid);
     pk = opti.variable(4);
     
     % Set up the functions, bounds, and options for fmincon
     
-    J =  myObjective(xk, uk, F.weights, Track) ;
-    [q,g] =  myConstraint(xk, uk, pk, F.defectCst, Track, Vehicle, savingConstraintsBounds) ;
-%     g =  myIneqConstraint(xk, uk, pk, F.defectCst, Track, Vehicle, savingConstraintsBounds) ;
+    J =  myObjective(xk, F.weights, Track) ;
+%     [q,g] =  myConstraint(xk, uk, pk, F.defectCst, Track, Vehicle, savingConstraintsBounds) ;
+    [q,~] =  myConstraint(xk, uk, pk, F.defectCst, Track, Vehicle, savingConstraintsBounds) ;
+%     q.generate('gen.c');
     
     opti.minimize(  J   );
     
     opti.subject_to( q==0 );
-    opti.subject_to( g<=0 );
+%     opti.subject_to( g<=0 );
     opti.subject_to( xLow<=xk<=xUpp );
     opti.subject_to( uLow<=uk<=uUpp );
     opti.subject_to( pLow<=pk<=pUpp );
@@ -126,7 +127,7 @@ end
 
 %% Objective function
 
-function cost = myObjective(x,u,weights,Track)
+function cost = myObjective(x,weights,Track)
 % This function returns the final weighted cost
 
 sLap = Track.sLap;
@@ -139,7 +140,7 @@ nGrid = length(sLap);
 ds = (sLap(end) - sLap(1)) / (nGrid - 1);
 
 % Inverse of the time derivative of the positon
-integrand = Controller.fnObjectiveCasadi(x,u,Track);   % Calculate the integrand of the cost function
+integrand = Controller.fnObjectiveCasadi(x,Track);   % Calculate the integrand of the cost function
 
 % Calculate laptime via integration
 laptime = ds*integrand*weights;  % Integration
@@ -164,7 +165,8 @@ sLap = Track.sLap;
 
 nGrid = length(sLap);
 
-kappa = interp1(Track.distance,Track.curv,Track.sLap,'spline');
+% kappa = interp1(Track.distance,Track.curv,Track.sLap,'spline');
+kappa = interp1(Track.sLap,Track.curv,Track.sLap,'spline');
 
 % Calculate defects along the path
 ds = (sLap(end) - sLap(1)) / (nGrid - 1);
@@ -172,14 +174,14 @@ ds = (sLap(end) - sLap(1)) / (nGrid - 1);
 
 % gets the vehicle states derivative IN TIME
 
-[dx_vehicle,g,q,savingConstraints] = Controller.fnDynamicsVehicle(x,u,p,...
+[dx_vehicle,g,savingConstraints] = Controller.fnDynamics14DOFVehicle(x,u,p,...
                                             Vehicle,...
                                             Track);
 
 n       = x(1,:); % velocity
 zeta    = x(2,:); % body-slip angle
-vx      = x(3,:); % velocity
-vy      = x(4,:); % body-slip angle
+vx      = x(17,:); % velocity
+vy      = x(18,:); % body-slip angle
 
 % Calculates the conversion factor for the transformation, which is the
 % inverse speed along the center line
@@ -198,7 +200,7 @@ dx = [dx_track; dx_vehicle];
 defects = defectCst(ds,x,dx);
 
 % Call user-defined constraints and combine with defects
-[ceq,c] = Solver.fnCollectConstraints(defects,g,q,x,u,savingConstraints,savingConstraintsBounds);
+[ceq,c] = Solver.fnCollectConstraints(defects,g,x,u,savingConstraints,savingConstraintsBounds);
 
 
 

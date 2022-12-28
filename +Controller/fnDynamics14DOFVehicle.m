@@ -1,9 +1,10 @@
-function [dx,g_ineq,saving_constraints] = fnDynamics14DOFVehicle(x,u_c,p,Vehicle)
+function [dx,g_ineq,saving_constraints] = fnDynamics14DOFVehicle(x,u_c,p,Vehicle,Track)
 
 addpath('C:/dev/libraries/casadi-windows-matlabR2016a-v3.5.5')
 import casadi.*
 
-kappa = interp1(Track.distance,Track.curv,Track.sLap,'spline');
+% kappa = interp1(Track.distance,Track.curv,Track.sLap,'linear');
+kappa = interp1(Track.sLap,Track.curv,Track.sLap,'linear');
 
 % Distance Step
 ds = (Track.sLap(end) - Track.sLap(1)) / (length(x(1,:)) - 1);
@@ -11,36 +12,47 @@ ds = (Track.sLap(end) - Track.sLap(1)) / (length(x(1,:)) - 1);
 % Gravity constant
 g = 9.81;
 
-%% Vehicle states
-% heave = x(1); % longitudinal displacement
-% y = x(2); % lateral displacement
-heave = x(3,:); % heave displacement
-phi   = x(4,:); %roll angle
-theta = x(5,:); %pitch angle
-psi   = x(6,:); %yaw angle
-z1    = x(7,:); % fl unsprung mass displacement
-z2    = x(8,:); % fr unsprung mass displacement
-z3    = x(9,:); % rl unsprung mass displacement
-z4    = x(10,:); % rr unsprung mass displacement
+%% System states
+n = x(1,:);
+xi = x(2,:);
+
+% x = x(3); % longitudinal displacement
+% y = x(4); % lateral displacement
+% heave = x(5,:); % heave displacement
+phi   = x(6,:); %roll angle
+theta = x(7,:); %pitch angle
+% psi   = x(8,:); %yaw angle
+% z1    = x(9,:); % fl unsprung mass displacement
+% z2    = x(10,:); % fr unsprung mass displacement
+% z3    = x(11,:); % rl unsprung mass displacement
+% z4    = x(12,:); % rr unsprung mass displacement
 
 %%%%%%%%%%%%%%%%%%%%%%%% I don't need the wheel angular position
 
-u  = x(15,:);
-v  = x(16,:);
-w  = x(17,:);
-wx = x(18,:);
-wy = x(19,:);
-wz = x(20,:);
-z1_dot = x(21,:); % fl unsprung mass displacement rate
-z2_dot = x(22,:); % fr unsprung mass displacement rate
-z3_dot = x(23,:); % rl unsprung mass displacement rate
-z4_dot = x(24,:); % rr unsprung mass displacement rate
-omega1 = x(25,:); 
-omega2 = x(26,:); 
-omega3 = x(27,:); 
-omega4 = x(28,:); 
-steer = x(29,:);
-tau   = x(30,:);
+u  = x(17,:);
+v  = x(18,:);
+w  = x(19,:);
+wx = x(20,:);
+wy = x(21,:);
+wz = x(22,:);
+z1_dot = x(23,:); % fl unsprung mass displacement rate
+z2_dot = x(24,:); % fr unsprung mass displacement rate
+z3_dot = x(25,:); % rl unsprung mass displacement rate
+z4_dot = x(26,:); % rr unsprung mass displacement rate
+omega1 = x(27,:); 
+omega2 = x(28,:); 
+omega3 = x(29,:); 
+omega4 = x(30,:); 
+steer = x(31,:);
+tau   = x(32,:);
+xslf = x(33,:);
+xsrf = x(34,:);
+xslr = x(35,:);
+xsrr = x(36,:);
+xtlf = x(37,:);
+xtrf = x(38,:);
+xtlr = x(39,:);
+xtrr = x(40,:);
 
 %% Control inputs
 steerRate = u_c(1,:);
@@ -48,8 +60,8 @@ tauRate = u_c(2,:);
 
 %% Calculating the cumulative laptime
 
-Sf = (1 - n.*kappa)./(vx.*cos(xi)-vy.*sin(xi));
-cumLaptime = ds*Sf*ones(length(n),1);
+Sf = (1 - n.*kappa)./(u.*cos(xi)-v.*sin(xi));
+% cumLaptime = ds*Sf*ones(length(n),1);
 
 %% Vehicle parameters
 % Aero
@@ -57,7 +69,7 @@ liftCoeff   = Vehicle.aero.liftCoeff;
 dragCoeff   = Vehicle.aero.dragCoeff;
 frontalArea = Vehicle.aero.frontalArea;
 airDens     = Vehicle.aero.airDensity;
-aeroBalance = p(2);
+aeroBalance = p(2);  
 
 % Susp
 kslf=   160e3; %front left suspension stiffness (N/m)
@@ -77,19 +89,19 @@ hrcr=   0.15;  %rear roll center distance below sprung mass c.g. (m)
 steeringRatio = Vehicle.steeringratio;
 
 % Chassis
-m=Vehicle.chassis.Ms; % Sprung mass (kg)
-Jx=900; % Sprung mass roll inertia (kg.m^2)
-Jy=2000; % Sprung mass pitch inertia (kg.m^2)
-Jz=Vehicle.chassis.Iz; % Sprung mass yaw inertia (kg.m^2)
+m           = Vehicle.chassis.Ms; % Sprung mass (kg)
+Jx          = 300; % Sprung mass roll inertia (kg.m^2)
+Jy          = 1700; % Sprung mass pitch inertia (kg.m^2)
+Jz          = Vehicle.chassis.Iz; % Sprung mass yaw inertia (kg.m^2)
 wheelbase   = Vehicle.chassis.wheelbase;
 weight_dist = p(1);
 a           = wheelbase * (1-weight_dist);
 b           = wheelbase * weight_dist;
 h           = Vehicle.chassis.CoG;  % Sprung mass c.g. height (m)
-cf = Vehicle.chassis.frontTrack;
-cr = Vehicle.chassis.rearTrack; % front/rear track width (m)
-muf=55;    %front unsprung mass (kg)
-mur=55;    %rear unsprung mass (kg)
+cf          = Vehicle.chassis.frontTrack;
+cr          = Vehicle.chassis.rearTrack; % front/rear track width (m)
+muf         = 55;    %front unsprung mass (kg)
+mur         = 55;    %rear unsprung mass (kg)
 
 % Tires
 r01 = Vehicle.tire_1.radius;
@@ -110,51 +122,37 @@ MF_r = Vehicle.tire_3.MF;
 % steering angle at the tire
 delta = steer/steeringRatio;
 
-% the initial tire compression xtif
-xtirf=((m*g*b)/(2*(a+b))+muf*g)/ktf;
-xtilf=((m*g*b)/(2*(a+b))+muf*g)/ktf;
-xtilr=((m*g*a)/(2*(a+b))+mur*g)/ktr;
-xtirr=((m*g*a)/(2*(a+b))+mur*g)/ktr;
-xtlf=xtilf-z1;
-xtrf=xtirf-z2;
-xtlr=xtilr-z3;
-xtrr=xtirr-z4;
-
-%the initial spring compression xsif 
-xsirf=(m*g*b)/(2*(a+b)*ksrf);
-xsilf=(m*g*b)/(2*(a+b)*kslf);
-xsilr=(m*g*a)/(2*(a+b)*kslr);
-xsirr=(m*g*a)/(2*(a+b)*ksrr);
-xsrf=xsirf + heave + a*sin(theta) + cf/2*sin(phi);
-xslf=xsilf + heave + a*sin(theta) - cf/2*sin(phi);
-xslr=xsilr + heave - b*sin(theta) + cr/2*sin(phi);
-xsrr=xsirr + heave - b*sin(theta) - cr/2*sin(phi);
-
 % the initial length of the strut
-% lsirf=h-(r0-xtirf);
-% lsilf=h-(r0-xtilf);
-% lsilr=h-(r0-xtilr);
-% lsirr=h-(r0-xtirr);
-lsrf=h-(r01-xtrf)+heave;
-lslf=h-(r02-xtlf)+heave;
-lslr=h-(r03-xtlr)+heave;
-lsrr=h-(r04-xtrr)+heave;
+lslf=h-(r01+xtlf+xslf);
+lsrf=h-(r02+xtrf+xsrf);
+lslr=h-(r03+xtlr+xslr);
+lsrr=h-(r04+xtrr+xsrr);
 
 % the transforming matrix 
 Mrf=[0 0 cf/2;0 0 a;-cf/2 -a 0];
 Mlf=[0 0 -cf/2;0 0 a;cf/2 -a 0];
 Mlr=[0 0 -cr/2;0 0 -b;cr/2 b 0];
 Mrr=[0 0 cr/2;0 0 -b;-cr/2 b 0];
+
 % initial velocity of strut mounting point in x y z by transforming the c.g. velocities
 wm=[wx;wy;wz];
 vm=[u;v;w];
 
+% Vsrf = zeros(3,length(n)); Vslf = zeros(3,length(n));
+% Vsrr = zeros(3,length(n)); Vslr = zeros(3,length(n));
+Vsrf = []; Vslf = [];
+Vsrr = []; Vslr = [];
 % vou precisar fazer um for loop
 for i=1:length(x(1,:))
-    Vsrf(:,1)=Mrf*wm(:,i)+vm(:,i); % front right mounting point x y z velocity in coordinate frame 1
-    Vslf(:,1)=Mlf*wm(:,i)+vm(:,i); % front left
-    Vslr(:,1)=Mlr*wm(:,i)+vm(:,i); % rear left
-    Vsrr(:,1)=Mrr*wm(:,i)+vm(:,i); % rear right
+    Vsrf_i=Mrf*wm(:,i)+vm(:,i); % front right mounting point x y z velocity in coordinate frame 1
+    Vslf_i=Mlf*wm(:,i)+vm(:,i); % front left
+    Vslr_i=Mlr*wm(:,i)+vm(:,i); % rear left
+    Vsrr_i=Mrr*wm(:,i)+vm(:,i); % rear right
+
+    Vsrf=[Vsrf Vsrf_i];
+    Vslf=[Vslf Vslf_i];
+    Vslr=[Vslr Vslr_i];
+    Vsrr=[Vsrr Vsrr_i];
 end
 % Vsrf=Mrf*wm+vm; % front right mounting point x y z velocity in coordinate frame 1
 % Vslf=Mlf*wm+vm; % front left
@@ -162,24 +160,25 @@ end
 % Vsrr=Mrr*wm+vm; % rear right
 
 % initial unsprung mass velocity
-uurf=Vsrf(1,:)-lsrf.*wy; 
 uulf=Vslf(1,:)-lslf.*wy; 
+uurf=Vsrf(1,:)-lsrf.*wy; 
 uulr=Vslr(1,:)-lslr.*wy; 
 uurr=Vsrr(1,:)-lsrr.*wy; 
-vurf=Vsrf(2,:)+lsrf.*wx; 
 vulf=Vslf(2,:)+lslf.*wx; 
+vurf=Vsrf(2,:)+lsrf.*wx; 
 vulr=Vslr(2,:)+lslr.*wx; 
 vurr=Vsrr(2,:)+lsrr.*wx;
-wulf=w;
-wurf=w;
-wulr=w;
-wurr=w;
+
+wulf=z1_dot;
+wurf=z2_dot;
+wulr=z3_dot;
+wurr=z4_dot;
+
 % % initial strut acceration
 dxslf=-Vslf(3,:)+wulf;
 dxsrf=-Vsrf(3,:)+wurf;
 dxslr=-Vslr(3,:)+wulr;
 dxsrr=-Vsrr(3,:)+wurr;
-% initial unsprung mass acceration
 
 
 % wheel rotational velocity
@@ -192,72 +191,50 @@ dxsrr=-Vsrr(3,:)+wurr;
 % the instantaneous tire radius
 % % to account for the wheel lift-off, when the tire radial compression becomes less than zero, Rij=r0;
 
-Rrf=(r01-xtrf)./(cos(theta).*cos(phi));
+Rlf=(r01-xtlf)./(cos(theta).*cos(phi));
 
-Rlf=(r02-xtlf)./(cos(theta).*cos(phi));
+Rrf=(r02-xtrf)./(cos(theta).*cos(phi));
 
 Rlr=(r03-xtlr)./(cos(theta).*cos(phi));
 
 Rrr=(r04-xtrr)./(cos(theta).*cos(phi));
 
 % the longitudinal and lateral velocities at the tire contact patch in coordinate frame 2
-ugrf=cos(theta).*(uurf-wy.*Rrf)+sin(theta).*(wurf.*cos(phi)+sin(phi).*(wx.*Rrf+vurf));
 uglf=cos(theta).*(uulf-wy.*Rlf)+sin(theta).*(wulf.*cos(phi)+sin(phi).*(wx.*Rlf+vulf));
+ugrf=cos(theta).*(uurf-wy.*Rrf)+sin(theta).*(wurf.*cos(phi)+sin(phi).*(wx.*Rrf+vurf));
 uglr=cos(theta).*(uulr-wy.*Rlr)+sin(theta).*(wulr.*cos(phi)+sin(phi).*(wx.*Rlr+vulr));
 ugrr=cos(theta).*(uurr-wy.*Rrr)+sin(theta).*(wurr.*cos(phi)+sin(phi).*(wx.*Rrr+vurr));
 
-vgrf=cos(phi).*(vurf+wx.*Rrf)-wurf.*sin(phi);
 vglf=cos(phi).*(vulf+wx.*Rlf)-wulf.*sin(phi);
+vgrf=cos(phi).*(vurf+wx.*Rrf)-wurf.*sin(phi);
 vglr=cos(phi).*(vulr+wx.*Rlr)-wulr.*sin(phi);
 vgrr=cos(phi).*(vurr+wx.*Rrr)-wurr.*sin(phi);
 % vglr=Vslr(2)+wx*(lslr+Rlr);
 % vgrr=Vsrr(2)+wx*(lsrr+Rrr);
 
 % tire slip angle of each wheel
-alpha_rf=atan(vgrf./ugrf)-delta;
 alpha_lf=atan(vglf./uglf)-delta;
+alpha_rf=atan(vgrf./ugrf)-delta;
 alpha_lr=atan(vglr./uglr);
 alpha_rr=atan(vgrr./ugrr);
 
-% % longitudinal slips
-% if Rrf*wrf>(ugrf*cos(delta)+vgrf*sin(delta))
-% % s_rf=(Rrf*wrf-(ugrf*cos(delta)+vgrf*sin(delta)))/(Rrf*wrf);
-% kappa_rf=1-abs((ugrf*cos(delta)+vgrf*sin(delta))/(Rrf*wrf));
-% else 
-% % s_rf=(Rrf*wrf-(ugrf*cos(delta)+vgrf*sin(delta)))/(ugrf*cos(delta)+vgrf*sin(delta));
-% kappa_rf=abs((Rrf*wrf)/(ugrf*cos(delta)+vgrf*sin(delta)))-1;
-% end
-% if Rlf*wlf>(uglf*cos(delta)+vglf*sin(delta))
-% % s_lf=(Rlf*wlf-(uglf*cos(delta)+vglf*sin(delta)))/(Rlf*wlf);
-% kappa_lf=1-abs((uglf*cos(delta)+vglf*sin(delta))/(Rlf*wlf));
-% else
-% % s_lf=(Rlf*wlf-(uglf*cos(delta)+vglf*sin(delta)))/(uglf*cos(delta)+vglf*sin(delta));    
-% kappa_lf=abs((Rlf*wlf)/(uglf*cos(delta)+vglf*sin(delta)))-1;
-% end
-% if Rlr*wlr>uglr
-% % s_lr=(Rlr*wlr-uglr)/(Rlr*wlr);
-% kappa_lr=1-abs(uglr/(Rlr*wlr));
-% else 
-% % s_lr=(Rlr*wlr-uglr)/(uglr);
-% kappa_lr=abs((Rlr*wlr)/uglr)-1;
-% end
-% if Rrr*wrr>ugrr
-% % s_rr=(Rrr*wrr-ugrr)/(Rrr*wrr);
-% kappa_rr=1-abs(ugrr/(Rrr*wrr));
-% else
-% % s_rr=(Rrr*wrr-ugrr)/(ugrr);
-% kappa_rr=abs((Rrr*wrr)/ugrr)-1;
-% end
 
-kappa_lf =  -( 1 - (Rlf.*omega1./uglf) ) ;
-kappa_rf =  -( 1 - (Rrf.*omega2./ugrf) ) ;
-kappa_lr =  -( 1 - (Rlr.*omega3./uglr) ) ;
-kappa_rr =  -( 1 - (Rrr.*omega4./ugrr) ) ;
+% % longitudinal slips
+
+% kappa_lf =  -( 1 - (Rlf.*omega1./uglf) ) ;
+% kappa_rf =  -( 1 - (Rrf.*omega2./ugrf) ) ;
+% kappa_lr =  -( 1 - (Rlr.*omega3./uglr) ) ;
+% kappa_rr =  -( 1 - (Rrr.*omega4./ugrr) ) ;
+
+kappa_lf =  (Rlf.*omega1-(uglf.*cos(delta)+vglf.*sin(delta)))./(uglf.*cos(delta)+vglf.*sin(delta)) ;
+kappa_rf =  (Rrf.*omega2-(ugrf.*cos(delta)+vgrf.*sin(delta)))./(ugrf.*cos(delta)+vgrf.*sin(delta)) ;
+kappa_lr =  (Rlr.*omega3-uglr)./(uglr) ;
+kappa_rr =  (Rrr.*omega4-ugrr)./(ugrr) ;
 
 % aerodynamic forces
 
-dragForce = 0.5*airDens*dragCoeff*frontalArea*vx.^2;    
-downforce       = 0.5*airDens*liftCoeff*frontalArea*vx.^2;
+dragForce       = 0.5*airDens*dragCoeff*frontalArea*u.^2;    
+downforce       = 0.5*airDens*liftCoeff*frontalArea*u.^2;
 frontDownforce  = aeroBalance*downforce;
 rearDownforce   = (1-aeroBalance)*downforce;
 
@@ -273,22 +250,12 @@ Fzglr=xtlr*ktr+rearDownforce/2;
 Fzgrr=xtrr*ktr+rearDownforce/2;
 
 % get forces and moments from the tire
-% Fytlf
-% Fytrf
-% Fytlr
-% Fytrr
-% Fxtlf
-% Fxtrf
-% Fxtlr
-% Fxtrr
-% Mztlf
-% Mztrf
-% Mztlr
-% Mztrr
-[Fxtlf,Fytlf,Mztlf]  = Solver.MF5ss_eval(Fzglf,kappa_lf,alpha_lf,0,MF_f);    
-[Fxtrf,Fytrf,Mztrf]  = Solver.MF5ss_eval(Fzgrf,kappa_rf,alpha_rf,0,MF_f);
-[Fxtlr,Fytlr,Mztlr]  = Solver.MF5ss_eval(Fzglr,kappa_lr,alpha_lr,0,MF_r);    
-[Fxtrr,Fytrr,Mztrr]  = Solver.MF5ss_eval(Fzgrr,kappa_rr,alpha_rr,0,MF_r);   
+
+[Fxtlf,Fytlf,Mztlf]  = Solver.MF5ss_eval(Fzglf,kappa_lf,-alpha_lf,0,MF_f);    
+[Fxtrf,Fytrf,Mztrf]  = Solver.MF5ss_eval(Fzgrf,kappa_rf,-alpha_rf,0,MF_f);
+[Fxtlr,Fytlr,Mztlr]  = Solver.MF5ss_eval(Fzglr,kappa_lr,-alpha_lr,0,MF_r);    
+[Fxtrr,Fytrr,Mztrr]  = Solver.MF5ss_eval(Fzgrr,kappa_rr,-alpha_rr,0,MF_r);   
+
 
 Fxglf=Fxtlf.*cos(delta)-Fytlf.*sin(delta);
 Fxgrf=Fxtrf.*cos(delta)-Fytrf.*sin(delta);
@@ -309,20 +276,30 @@ Fgrf=[Fxgrf;Fygrf;Fzgrf];
 Fglr=[Fxglr;Fyglr;Fzglr];
 Fgrr=[Fxgrr;Fygrr;Fzgrr];
 
-R_y = zeros(3,3,length(x(1,:))); R_x = zeros(3,3,length(x(1,:)));
-Fgslf = zeros(3,length(x(1,:)));
-Fgsrf = zeros(3,length(x(1,:)));
-Fgslr = zeros(3,length(x(1,:)));
-Fgsrr = zeros(3,length(x(1,:)));
+% R_y = zeros(3,3,length(x(1,:))); R_x = zeros(3,3,length(x(1,:)));
+% Fgslf = zeros(3,length(x(1,:)));
+% Fgsrf = zeros(3,length(x(1,:)));
+% Fgslr = zeros(3,length(x(1,:)));
+% Fgsrr = zeros(3,length(x(1,:)));
+
+Fgslf = [];
+Fgsrf = [];
+Fgslr = [];
+Fgsrr = [];
 %rotation matrix
 for i=1:length(x(1,:))
-    R_y(:,:,i) = [cos(theta(i)) 0 -sin(theta(i));0 1 0;sin(theta(i)) 0 cos(theta(i))];
-    R_x(:,:,i) = [1 0 0;0 cos(phi(i)) sin(phi(i));0 -sin(phi(i)) cos(phi(i))];
+    R_y = [cos(theta(i)) 0 -sin(theta(i));0 1 0;sin(theta(i)) 0 cos(theta(i))];
+    R_x = [1 0 0;0 cos(phi(i)) sin(phi(i));0 -sin(phi(i)) cos(phi(i))];
 
-    Fgslf(:,i)=R_x(:,:,i)*R_y(:,:,i)*Fglf(:,i);
-    Fgsrf(:,i)=R_x(:,:,i)*R_y(:,:,i)*Fgrf(:,i);
-    Fgslr(:,i)=R_x(:,:,i)*R_y(:,:,i)*Fglr(:,i);
-    Fgsrr(:,i)=R_x(:,:,i)*R_y(:,:,i)*Fgrr(:,i);
+    Fgslf_i=R_x*R_y*Fglf(:,i);
+    Fgsrf_i=R_x*R_y*Fgrf(:,i);
+    Fgslr_i=R_x*R_y*Fglr(:,i);
+    Fgsrr_i=R_x*R_y*Fgrr(:,i);
+
+    Fgslf = [Fgslf Fgslf_i];
+    Fgsrf = [Fgsrf Fgsrf_i];
+    Fgslr = [Fgslr Fgslr_i];
+    Fgsrr = [Fgsrr Fgsrr_i];
 end
 
 % R_y=[cos(theta) 0 -sin(theta);0 1 0;sin(theta) 0 cos(theta)];
@@ -380,7 +357,7 @@ Mzlr=Mztlr;
 Mzrr=Mztrr;
 
 % call powetrain calculation function
-[Tfl,Tfr,Trl,Trr,~,~] = Solver.getWheelTorque14DOF(tau,p,Vehicle,x);
+[Tfl,Tfr,Trl,Trr,~,~] = Solver.getWheelTorque2(tau,p,Vehicle,omega3,omega4);
 
 %% vehicle body dynamics module
 % input: Fxsij Fysij Fzsij Mxij Myij Mzij(forces and moments transmitted to sprung mass at each corner)
@@ -401,71 +378,90 @@ dphi=wx+wy.*sin(phi).*tan(theta)+wz.*cos(phi).*tan(theta);
 % X_dot=u.*cos(psi)-v.*sin(psi);
 
 
-% the unsprung mass vertical velocity wuij 
+% time derivative of the unsprung mass vertical velocity wuij 
 dzufl=(1/muf)*(cos(phi).*(cos(theta).*(Fzglf-muf*g)+sin(theta).*Fxglf)-sin(phi).*Fyglf-Fdzlf-xslf*kslf-dxslf*bslf-muf*(vulf.*wx-uulf.*wy));
 dzufr=(1/muf)*(cos(phi).*(cos(theta).*(Fzgrf-muf*g)+sin(theta).*Fxgrf)-sin(phi).*Fygrf-Fdzrf-xsrf*ksrf-dxsrf*bsrf-muf*(vurf.*wx-uurf.*wy));
 dzurl=(1/mur)*(cos(phi).*(cos(theta).*(Fzglr-mur*g)+sin(theta).*Fxglr)-sin(phi).*Fyglr-Fdzlr-xslr*kslr-dxslr*bslr-mur*(vulr.*wx-uulr.*wy));
 dzurr=(1/mur)*(cos(phi).*(cos(theta).*(Fzgrr-mur*g)+sin(theta).*Fxgrr)-sin(phi).*Fygrr-Fdzrr-xsrr*ksrr-dxsrr*bsrr-mur*(vurr.*wx-uurr.*wy));
 
+% spring deflection rate of all 4 corners
+dx_spr = [dxslf;
+dxsrf;
+dxslr;
+dxsrr];
 
+% time derivative of the tire deflection of each tire
+dxtlf=-(cos(theta).*(z1_dot.*cos(phi)+vulf.*sin(phi))-uulf.*sin(theta));
+dxtrf=-(cos(theta).*(z2_dot.*cos(phi)+vurf.*sin(phi))-uurf.*sin(theta));
+dxtlr=-(cos(theta).*(z3_dot.*cos(phi)+vulr.*sin(phi))-uulr.*sin(theta));
+dxtrr=-(cos(theta).*(z4_dot.*cos(phi)+vurr.*sin(phi))-uurr.*sin(theta));
 
-dx(1,:) = x(15,:);
-dx(2,:) = x(16,:);
-dx(3,:) = w;
-dx(4,:) = dphi;
-dx(5,:) = dtheta;
-dx(6,:) = dpsi;
-dx(7,:) = z1_dot;
-dx(8,:) = z2_dot;
-dx(9,:) = z3_dot;
-dx(10,:) = z4_dot;
-dx(11,:) = omega1;
-dx(12,:) = omega2;
-dx(13,:) = omega3;
-dx(14,:) = omega4;
-dx(15,:) = u_dot;
-dx(16,:) = v_dot;
-dx(17,:) = w_dot;
-dx(18,:) = wx_dot;
-dx(19,:) = wy_dot;
-dx(20,:) = wz_dot;
-dx(21,:) = dzufl;
-dx(22,:) = dzufr;
-dx(23,:) = dzurl;
-dx(24,:) = dzurr;
-dx(25,:) = (1/Iwheel_1)*(Tfl-Fxtlf*Rlf);
-dx(26,:) = (1/Iwheel_2)*(Tfr-Fxtrf*Rrf);
-dx(27,:) = (1/Iwheel_3)*(Trl-Fxtlr*Rlr);
-dx(28,:) = (1/Iwheel_4)*(Trr-Fxtrr*Rrr);  
-dx(29,:) = steerRate;
-dx(30,:) = tauRate;
+% tire deflection rate of all 4 corners
+dx_tire = [dxtlf;
+    dxtrf;
+    dxtlr
+    dxtrr];
+
+dx = [u;
+      v;
+      w;
+      dphi;
+      dtheta;
+      dpsi;
+      z1_dot;
+      z2_dot;
+      z3_dot;
+      z4_dot;
+      omega1;
+      omega2;
+      omega3;
+      omega4;
+      u_dot;
+      v_dot;
+      w_dot;
+      wx_dot;
+      wy_dot;
+      wz_dot;
+      dzufl;
+      dzufr;
+      dzurl;
+      dzurr;
+      (1/Iwheel_1)*(Tfl-Fxglf.*Rlf);
+      (1/Iwheel_2)*(Tfr-Fxgrf.*Rlr);
+      (1/Iwheel_3)*(Trl-Fxglr.*Rrf);
+      (1/Iwheel_4)*(Trr-Fxgrr.*Rrr);
+      steerRate;
+      tauRate;
+      dx_spr;
+      dx_tire];
+
 
 %% Equality Constraints : Tire Saturation
 epsKap = 1e-5;
 epsAlp = 1e-5;
 
-[Fx1_t,~,~]     = Solver.MF5ss_eval(Fzglf,kappa_lf+epsKap,alpha_lf,0,MF_f);    
-[Fx2_t,~,~]     = Solver.MF5ss_eval(Fzgrf,kappa_rf+epsKap,alpha_rf,0,MF_f);       
-[Fx3_t,~,~]     = Solver.MF5ss_eval(Fzglr,kappa_lr+epsKap,alpha_lr,0,MF_r);    
-[Fx4_t,~,~]     = Solver.MF5ss_eval(Fzgrr,kappa_rr+epsKap,alpha_rr,0,MF_r);    
+[Fx1_t,~,~]     = Solver.MF5ss_eval(Fzglf,kappa_lf+epsKap,-alpha_lf,0,MF_f);    
+[Fx2_t,~,~]     = Solver.MF5ss_eval(Fzgrf,kappa_rf+epsKap,-alpha_rf,0,MF_f);       
+[Fx3_t,~,~]     = Solver.MF5ss_eval(Fzglr,kappa_lr+epsKap,-alpha_lr,0,MF_r);    
+[Fx4_t,~,~]     = Solver.MF5ss_eval(Fzgrr,kappa_rr+epsKap,-alpha_rr,0,MF_r);    
 
-[~,Fy1_t,~]     = Solver.MF5ss_eval(Fzglf,kappa_lf,alpha_lf+epsKap,0,MF_f);    
-[~,Fy2_t,~]     = Solver.MF5ss_eval(Fzgrf,kappa_rf,alpha_rf+epsKap,0,MF_f);
-[~,Fy3_t,~]     = Solver.MF5ss_eval(Fzglr,kappa_lr,alpha_lr+epsKap,0,MF_r);    
-[~,Fy4_t,~]     = Solver.MF5ss_eval(Fzgrr,kappa_rr,alpha_rr+epsKap,0,MF_r);   
+[~,Fy1_t,~]     = Solver.MF5ss_eval(Fzglf,kappa_lf,-alpha_lf+epsKap,0,MF_f);    
+[~,Fy2_t,~]     = Solver.MF5ss_eval(Fzgrf,kappa_rf,-alpha_rf+epsKap,0,MF_f);
+[~,Fy3_t,~]     = Solver.MF5ss_eval(Fzglr,kappa_lr,-alpha_lr+epsKap,0,MF_r);    
+[~,Fy4_t,~]     = Solver.MF5ss_eval(Fzgrr,kappa_rr,-alpha_rr+epsKap,0,MF_r);   
 
 
 % Calculation of Slip Stiffness
-C_x_1 = (Fx1_t - Fx1)/epsKap;
-C_x_2 = (Fx2_t - Fx2)/epsKap;
-C_x_3 = (Fx3_t - Fx3)/epsKap;
-C_x_4 = (Fx4_t - Fx4)/epsKap;
+C_x_1 = (Fx1_t - Fxtlf)./epsKap;
+C_x_2 = (Fx2_t - Fxtrf)./epsKap;
+C_x_3 = (Fx3_t - Fxtlr)./epsKap;
+C_x_4 = (Fx4_t - Fxtrr)./epsKap;
 
 % Calculation of Cornering Stiffness
-C_y_1 = (Fy1_t - Fy1)/epsAlp;
-C_y_2 = (Fy2_t - Fy2)/epsAlp;
-C_y_3 = (Fy3_t - Fy3)/epsAlp;
-C_y_4 = (Fy4_t - Fy4)/epsAlp;   
+% C_y_1 = (Fy1_t - Fytlf)/epsAlp;
+% C_y_2 = (Fy2_t - Fytrf)/epsAlp;
+% C_y_3 = (Fy3_t - Fytlr)/epsAlp;
+% C_y_4 = (Fy4_t - Fytrr)/epsAlp;   
 
 % Groups the inequality constraint into a single vector
 %     g_ineq = [C_x_1;
@@ -481,7 +477,7 @@ C_y_4 = (Fy4_t - Fy4)/epsAlp;
 
 % Understeer angle
 wb = a+b;
-delta_kin = wb*wz./vx;
+delta_kin = wb*wz./u;
 theta_uang = delta-delta_kin;
 theta_lim_uang = deg2rad(8);
 C_uang = (theta_uang/theta_lim_uang).^2-1;
@@ -510,7 +506,7 @@ g_ineq = -[C_x_1;
 
 %% Saving Constraints : Fuel Usage
 
-mass_flow  = Solver.mass_flow_calculation(x,tau,Vehicle);
+mass_flow  = Solver.mass_flow_calculation(omega3,omega4,tau,Vehicle);
 fuel_usage = ds*(Sf.*mass_flow)*ones(length(u),1) ;
 
 %% Saving Constraints : Tire Energy
@@ -581,8 +577,8 @@ rr_tire_energy_combined = sliding_energy_lateral_4 + ...
 %% saving constraints  
 
 
-    saving_constraints.tire_energy = fl_tire_energy_combined + fr_tire_energy_combined +...
-        rl_tire_energy_combined + rr_tire_energy_combined;
+saving_constraints.tire_energy = fl_tire_energy_combined + fr_tire_energy_combined +...
+            rl_tire_energy_combined + rr_tire_energy_combined;
 
 % saving_constraints.tire_energy = fl_tire_energy_combined;
 

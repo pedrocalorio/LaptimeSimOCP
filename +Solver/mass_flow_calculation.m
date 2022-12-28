@@ -1,8 +1,5 @@
-function mass_flow = mass_flow_calculation(x,tau,Vehicle)
+function mass_flow = mass_flow_calculation(omega3,omega4,tau,Vehicle)
     % Inequality constraint on fuel saving 
-    
-    omega3 = x(8,:);
-    omega4 = x(9,:);
 
     % Calculates the engine speed
     we      = (omega3 + omega4)/2;

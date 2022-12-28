@@ -7,7 +7,7 @@ clc;
 
 %% Defines the folder name where the simulations results will be stored.
 
-folder_name = 'budapest_wd_sweep_stabilityconstraint_yawstiff';
+folder_name = '14dof_vehicle_test';
 
 % Folder path where the simulation results will be stored
 results_folder = [pwd '\' 'SimResults'];
@@ -24,7 +24,7 @@ base_folder_adress = [results_folder '\' folder_name];
 inputFolder = [pwd '\+Model'];
 
 % Name of the spredsheet file. Change based on what is the vehicle parameters you want to load 
-setup_name4wm = [inputFolder '\WD_sweep.xlsx'];
+setup_name4wm = [inputFolder '\LMP2_Bas.xlsx'];
 
 % Gets the number of simulations based on the amount of different vehicles defined
 number_of_sims = height(readtable(setup_name4wm,'Sheet','MassInertia'));
@@ -45,11 +45,11 @@ for ii = 1:number_of_sims
     %         if the simulation will optimize vehicle parameters
     %         if the simulation contains fuel saving constraints
     %         if the simulation contains tire energy saving constraints
-    problem = Initialize.fnInitMethod('trapezoid',700,false,false,false);
+    problem = Initialize.fnInitMethod('trapezoid',80,true,false,false);
 
     problem = Initialize.fnInitVehicleSheet(problem,ii,setup_name4wm);
 
-    problem = Initialize.fnInitTrack(problem, false, false);
+    problem = Initialize.fnInitTrack(problem, false, true);
 
     problem = Initialize.fnInitFunctionHandles(problem);
 

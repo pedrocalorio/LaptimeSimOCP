@@ -1,8 +1,5 @@
 function [Torque_FL,Torque_FR,Torque_RL,Torque_RR,fTauPos,fTauNeg,...
-    omega_e,Te]  = getWheelTorque2(tau,p,Vehicle,x)
-
-    omega3 = x(8,:);
-    omega4 = x(9,:);
+    omega_e,Te]  = getWheelTorque2(tau,p,Vehicle,omega3,omega4)
 
 
     % Calculates positive and negative longitudinal control input variables
@@ -54,8 +51,8 @@ function [Torque_FL,Torque_FR,Torque_RL,Torque_RR,fTauPos,fTauNeg,...
     % Torque at each wheels
     Torque_FL = Tf/2;
     Torque_FR = Tf/2;
-    Torque_RL = (Te/2+Tr_brk/2) + delta_T;
-    Torque_RR = (Te/2+Tr_brk/2) - delta_T;
+    Torque_RL = (Te/2+Tr_brk/2) + 0*delta_T;
+    Torque_RR = (Te/2+Tr_brk/2) - 0*delta_T;
 
 
 end

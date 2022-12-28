@@ -12,7 +12,7 @@ vehicle.chassis.wheelbase       = 3.05;
 vehicle.chassis.frontTrack      = 1.560;
 vehicle.chassis.rearTrack       = 1.550;
 vehicle.chassis.Iz              = 1250;
-vehicle.chassis.CoG             = 0.350;
+vehicle.chassis.CoG             = 0.4;
 
 % Aero 
 
@@ -66,7 +66,7 @@ vehicle.differential.G = 1.8;
 
 % Engine properties
 
-EnginePowerMap = readtable("D:\dev\LaptimeSimOCP\+Model\LMP2 Engine Power Map.xlsx");
+EnginePowerMap = readtable("C:\dev\LaptimeSimOCP\+Model\LMP2 Engine Power Map.xlsx");
 
 % going from hp to watts the multiplicy constant is 745.7
 vehicle.engine.maximum_power = 550*745.7;
